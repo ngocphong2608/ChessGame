@@ -13,9 +13,7 @@ public class BoardManager : MonoBehaviour {
     public List<GameObject> ChessmanPrefabs;
     private List<GameObject> activeChessmans;
 
-    private float dx = 0f;
-    private float dy = 0.5f;
-    private float dz = 0.3f;
+    
 
     public Chessman[,] Chessmans { get; set; }
     private Chessman selectedChessman;
@@ -109,7 +107,7 @@ public class BoardManager : MonoBehaviour {
     {
         GameObject obj = Instantiate(
             ChessmanPrefabs[index], 
-            AdjustChessmanPosition(GetTileCenter(x, y)), 
+            GetTileCenter(x, y), 
             ChessmanPrefabs[index].transform.rotation) as GameObject;
 
         obj.transform.SetParent(this.transform);
@@ -127,10 +125,10 @@ public class BoardManager : MonoBehaviour {
         return origin;  
     }
 
-    private Vector3 AdjustChessmanPosition(Vector3 pos)
-    {
-        return pos + new Vector3(dx, dy, dz);
-    }
+    //private Vector3 AdjustChessmanPosition(Vector3 pos)
+    //{
+    //    return pos + new Vector3(dx, dy, dz);
+    //}
 
     private void SpawnAllChessmans()
     {
@@ -197,9 +195,9 @@ public class BoardManager : MonoBehaviour {
         selectedChessman = Chessmans[x, y];
 
         // change chessman material
-        previousMat = selectedChessman.GetComponent<MeshRenderer>().material;
+        previousMat = selectedChessman.GetComponentInChildren<MeshRenderer>().material;
         selectedMat.mainTexture = previousMat.mainTexture;
-        selectedChessman.GetComponent<MeshRenderer>().material = selectedMat;
+        selectedChessman.GetComponentInChildren<MeshRenderer>().material = selectedMat;
 
         BoardHighlights.Instance.HighlightAllowedMoves(allowedMoves);
     }
@@ -266,13 +264,13 @@ public class BoardManager : MonoBehaviour {
             }
 
             Chessmans[selectedChessman.CurrentX, selectedChessman.CurrentY] = null;
-            selectedChessman.transform.position = AdjustChessmanPosition(GetTileCenter(x, y));
+            selectedChessman.transform.position = GetTileCenter(x, y);
             selectedChessman.SetPosition(x, y);
             Chessmans[x, y] = selectedChessman;
             isWhiteTurn = !isWhiteTurn;
         }
 
-        selectedChessman.GetComponent<MeshRenderer>().material = previousMat;
+        selectedChessman.GetComponentInChildren<MeshRenderer>().material = previousMat;
         BoardHighlights.Instance.HideHighlights();
         selectedChessman = null;
     }
