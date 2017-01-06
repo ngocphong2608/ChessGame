@@ -13,8 +13,6 @@ public class BoardManager : MonoBehaviour {
     public List<GameObject> ChessmanPrefabs;
     private List<GameObject> activeChessmans;
 
-    
-
     public Chessman[,] Chessmans { get; set; }
     private Chessman selectedChessman;
     private bool isWhiteTurn = true;
@@ -27,12 +25,16 @@ public class BoardManager : MonoBehaviour {
 
     public int[] EnPassantMove { set; get; }
 
+    private Animator cameraAnimator;
+
     private void Start()
     {
         Instance = this;
         Chessmans = new Chessman[8, 8];
         EnPassantMove = new int[2] { -1, -1 };
         SpawnAllChessmans();
+
+        cameraAnimator = GameObject.Find("Main Camera").GetComponent<Animator>();
     }
 
     private void Update()
@@ -268,6 +270,12 @@ public class BoardManager : MonoBehaviour {
             selectedChessman.SetPosition(x, y);
             Chessmans[x, y] = selectedChessman;
             isWhiteTurn = !isWhiteTurn;
+
+            // Change Camera Position to other team
+            if (isWhiteTurn)
+                cameraAnimator.SetTrigger("WhiteTurn");
+            else
+                cameraAnimator.SetTrigger("BlackTurn");
         }
 
         selectedChessman.GetComponentInChildren<MeshRenderer>().material = previousMat;
