@@ -25,7 +25,7 @@ public class BoardManager : MonoBehaviour {
 
     public int[] EnPassantMove { set; get; }
 
-    private Animator cameraAnimator;
+    public CameraButtonManager buttonManager;
 
     private void Start()
     {
@@ -33,8 +33,6 @@ public class BoardManager : MonoBehaviour {
         Chessmans = new Chessman[8, 8];
         EnPassantMove = new int[2] { -1, -1 };
         SpawnAllChessmans();
-
-        cameraAnimator = GameObject.Find("Main Camera").GetComponent<Animator>();
     }
 
     private void Update()
@@ -273,9 +271,9 @@ public class BoardManager : MonoBehaviour {
 
             // Change Camera Position to other team
             if (isWhiteTurn)
-                cameraAnimator.SetTrigger("WhiteTurn");
+                buttonManager.MoveCamera("white");
             else
-                cameraAnimator.SetTrigger("BlackTurn");
+                buttonManager.MoveCamera("black");
         }
 
         selectedChessman.GetComponentInChildren<MeshRenderer>().material = previousMat;
