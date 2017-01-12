@@ -2,11 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
 public class VisualizeMatch : MonoBehaviour {
     List<String> data;
+    MainGameManager gameManager;
+
+    public VisualizeMatch(MainGameManager gameManager)
+    {
+        this.gameManager = gameManager;
+    }
 
     public void LoadMatchData()
     {
@@ -44,12 +51,55 @@ public class VisualizeMatch : MonoBehaviour {
         {
             String[] moves = data[i].Split(' ');
             Debug.Log("Turn " + (i+1) + ": " + moves[0] + " " + moves[1]);
-            Move(moves[0]);
+            Move(0, moves[0]);
+            Move(1, moves[1]);
         }
     }
 
-    public void Move(String move)
+    public String Normalize(String move)
     {
+        return move.Replace("+", "").Replace("x", "");
+    }
 
+    public void Move(int turn, String move)
+    {
+        move = Normalize(move);
+        char f = move[0];
+
+        if (move == "O-O")
+        {
+            gameManager.KingCastling(turn);
+        }
+        else if (move == "O-O-O")
+        {
+            gameManager.QueenCastling(turn);
+        }
+        else
+        {
+            int n = move.Length;
+            int rank = move[n - 1] - '0'; //hang
+            int file = move[n - 2] - 'a'; //cot
+            Location dest = new Location(rank, file);
+            Location src;
+
+            if ("KQBNR".Contains(f.ToString())) {
+		        String disam = "";
+		        if (n > 3) {
+			        disam += move[1];
+		        } else if (n > 4) {
+			        disam += move[2];
+		        }
+		        src = gameManager.Find(turn, f, dest, disam);
+	        } else { //Pawn
+		        String disam = "";
+		        if (n > 2) {
+			        disam += move[0];
+		        } else if (n > 3) {
+			        disam += move[1];
+		        }
+		        src = gameManager.Find(turn, 'P', dest, disam);
+	        }
+            gameManager.Move(src, dest);
+        }
     }
 }
