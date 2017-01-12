@@ -333,7 +333,15 @@ public class BoardManager : MonoBehaviour
     public Location Find(int turn, char c, Location dst, string disam)
     {
         Location lo = new Location();
-
+        bool isWhite = (turn == 0);
+        foreach (GameObject chessObj in activeChessmans)
+        {
+            Chessman chess = chessObj.GetComponent<Chessman>();
+            if (chess.isWhite == isWhite)
+            {
+                //if (chess.CanGo(dst))
+            }
+        }
 
         return lo;
     }

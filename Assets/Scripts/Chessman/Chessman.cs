@@ -16,4 +16,11 @@ public abstract class Chessman : MonoBehaviour {
     {
         return new bool[8, 8];
     }
+
+    public bool CanGo(int x, int y)
+    {
+        bool[,] possible = this.PossibleMove();
+
+        return possible[x, y];
+    }
 }
