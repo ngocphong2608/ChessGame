@@ -19,7 +19,7 @@ public abstract class Chessman : MonoBehaviour {
         return new bool[8, 8];
     }
 
-    public virtual bool[,] PossibleKingMove()
+    public virtual bool[,] PossibleEat()
     {
         return new bool[8, 8];
     }

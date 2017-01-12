@@ -8,6 +8,11 @@ public class Bishop : Chessman {
         return "B";
     }
 
+    public override bool[,] PossibleEat()
+    {
+        return PossibleMove();
+    }
+
     public override bool[,] PossibleMove()
     {
         bool[,] moves = new bool[8, 8];

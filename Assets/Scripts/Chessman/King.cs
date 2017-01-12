@@ -44,10 +44,7 @@ public class King : Chessman {
             Chessman chessman = go.GetComponent<Chessman>();
             if (chessman.isWhite != isWhite)
             {
-                if (chessman.GetType() == typeof(King))
-                    listMoves.Add(chessman.PossibleKingMove());
-                else
-                    listMoves.Add(chessman.PossibleMove());
+                listMoves.Add(chessman.PossibleEat());
             }
 
         }
@@ -72,7 +69,7 @@ public class King : Chessman {
         return result;
     }
 
-    public override bool[,] PossibleKingMove()
+    public override bool[,] PossibleEat()
     {
         bool[,] moves = new bool[8, 8];
         int[] dx = { -1, 0, 1, 1, 1, 0, -1, -1 };

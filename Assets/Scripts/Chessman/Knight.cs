@@ -8,6 +8,11 @@ public class Knight : Chessman {
         return "N";
     }
 
+    public override bool[,] PossibleEat()
+    {
+        return PossibleMove();
+    }
+
     public override bool[,] PossibleMove()
     {
         bool[,] moves = new bool[8, 8];
