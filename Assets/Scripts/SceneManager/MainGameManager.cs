@@ -13,4 +13,12 @@ public class MainGameManager : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    [ContextMenu("VisualizeAMatch")]
+    void VisualizeAMatch()
+    {
+        VisualizeMatch visualize = new VisualizeMatch();
+        visualize.LoadMatchData();
+        visualize.Visualize();
+    }
 }
