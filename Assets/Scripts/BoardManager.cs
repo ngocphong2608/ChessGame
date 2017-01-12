@@ -173,7 +173,7 @@ public class BoardManager : MonoBehaviour
             SpawnChessman(11, i, 6);
     }
 
-    void SelectChessman(int x, int y)
+    public void SelectChessman(int x, int y)
     {
         if (Chessmans[x, y] == null)
             return;
@@ -204,7 +204,7 @@ public class BoardManager : MonoBehaviour
         BoardHighlights.Instance.HighlightAllowedMoves(allowedMoves);
     }
 
-    void MoveChessman(int x, int y)
+    public void MoveChessman(int x, int y)
     {
         if (allowedMoves[x, y])
         {
@@ -328,5 +328,23 @@ public class BoardManager : MonoBehaviour
 
         BoardHighlights.Instance.HideHighlights();
         SpawnAllChessmans();
+    }
+
+    public Location Find(int turn, char c, Location dst, string disam)
+    {
+        Location lo = new Location();
+
+
+        return lo;
+    }
+
+    public void KingCastling(int turn)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void QueenCastling(int turn)
+    {
+        throw new NotImplementedException();
     }
 }

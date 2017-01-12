@@ -25,20 +25,17 @@ public class MainGameManager : MonoBehaviour {
 
     public void KingCastling(int turn)
     {
-        throw new NotImplementedException();
+        BoardManager.Instance.KingCastling(turn);
     }
 
     public void QueenCastling(int turn)
     {
-        throw new NotImplementedException();
+        BoardManager.Instance.QueenCastling(turn);
     }
 
     public Location Find(int turn, char c, Location dst, string disam)
     {
-        Location lo = new Location();
-        
-
-        return lo;
+        return BoardManager.Instance.Find(turn, c, dst, disam);
     }
 
     public void Move(Location src, Location dst)
