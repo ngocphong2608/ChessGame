@@ -195,9 +195,9 @@ public class BoardManager : MonoBehaviour {
         selectedChessman = Chessmans[x, y];
 
         // change chessman material
-        previousMat = selectedChessman.GetComponentInChildren<MeshRenderer>().material;
-        selectedMat.mainTexture = previousMat.mainTexture;
-        selectedChessman.GetComponentInChildren<MeshRenderer>().material = selectedMat;
+        //previousMat = selectedChessman.GetComponentInChildren<MeshRenderer>().material;
+        //selectedMat.mainTexture = previousMat.mainTexture;
+        //selectedChessman.GetComponentInChildren<MeshRenderer>().material = selectedMat;
 
         BoardHighlights.Instance.HighlightAllowedMoves(allowedMoves);
     }
@@ -276,7 +276,7 @@ public class BoardManager : MonoBehaviour {
                 buttonManager.MoveCamera("black");
         }
 
-        selectedChessman.GetComponentInChildren<MeshRenderer>().material = previousMat;
+        //selectedChessman.GetComponentInChildren<MeshRenderer>().material = previousMat;
         BoardHighlights.Instance.HideHighlights();
         selectedChessman = null;
     }
