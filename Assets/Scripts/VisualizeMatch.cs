@@ -10,7 +10,6 @@ public class VisualizeMatch : MonoBehaviour {
     List<String> data;
     int step = 0;
     int result = 0;
-
     MainGameManager gameManager;
     
 
@@ -18,88 +17,42 @@ public class VisualizeMatch : MonoBehaviour {
     {
         this.gameManager = gameManager;
     }
-
-    public void LoadMatchData_Back()
-    {
-        data = new List<string>();
-        string fileName = "Data/FWCCM2016/2016-11-21-Round8.txt";
-        try
-        {
-            string line;
-            StreamReader theReader = new StreamReader(fileName, Encoding.Default);
-            using (theReader)
-            {
-                do
-                {
-                    line = theReader.ReadLine();
-
-                    if (line != null)
-                    {
-                        //Debug.Log(line.Split('.')[1]);
-                        String[] parts = line.Split('.');
-                        if (parts.Length == 2)
-                        {
-                            data.Add(parts[1]);
-                        }
-                        else
-                        {
-                            if (line.Equals("0-1"))
-                                result = -1; //Black win
-                            else if (line.Equals("1-0"))
-                                result = 1; //White win
-                            else
-                                result = 0; //Tie
-                        }
-
-                    }
-                } while (line != null);
-
-                theReader.Close();
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.Log("{0}\n" + e.Message);
-        }
-    }
-
+    
     public void LoadMatchData()
     {
         data = new List<string>();
-        string fileName = "match1.txt";
+        string fileName = "Data/FWCCM2016/2016-11-21-Round8.pgn";
         try
         {
             string line;
             StreamReader theReader = new StreamReader(fileName, Encoding.Default);
-            using (theReader)
+            do
             {
-                do
+                line = theReader.ReadLine();
+                if (line != null)
                 {
-                    line = theReader.ReadLine();
+                    Debug.Log(line);
+                    if (line.Length > 0 && line[0] != '1')
+                        continue;
 
-                    if (line != null)
+                    String[] parts = line.Split(' ');
+                    foreach (String part in parts)
                     {
-                        //Debug.Log(line.Split('.')[1]);
-                        String[] parts = line.Split('.');
-                        if (parts.Length == 2)
-                        {
-                            data.Add(parts[1]);
-                        }
-                        else
-                        {
-                            if (line.Equals("0-1"))
-                                result = -1; //Black win
-                            else if (line.Equals("1-0"))
-                                result = 1; //White win
-                            else
-                                result = 0; //Tie
-                        }
-
+                        if (!part.Contains("."))
+                            data.Add(part);
                     }
-                } while (line != null); 
+                    String strResult = data[data.Count - 1];
+                    data.RemoveAt(data.Count - 1);
+                    if (strResult.Equals("0-1"))
+                        result = -1; //Black win
+                    else if (strResult.Equals("1-0"))
+                        result = 1; //White win
+                    else
+                        result = 0; //Tie
+                }
+            } while (line != null);
 
-                theReader.Close();
-            }
+            theReader.Close();
         }
         catch (Exception e)
         {
@@ -111,28 +64,18 @@ public class VisualizeMatch : MonoBehaviour {
     {
         for (int i = 0; i < data.Count; i++)
         {
-            String[] moves = data[i].Split(' ');
-            Debug.Log("Turn " + (i+1) + ": " + moves[0] + " " + moves[1]);
-            Move(0, moves[0]);
-            
-            Move(1, moves[1]);
+            Move(i%2, data[i]);
         }
     }
 
     public void VisualizeNextStep()
     {
-        int i = step;
         if (step == data.Count)
         {
             Debug.Log("End of game!");
             return;
         }
-
-        String[] moves = data[i].Split(' ');
-        Debug.Log("Turn " + (i + 1) + ": " + moves[0] + " " + moves[1]);
-        Move(0, moves[0]);
-
-        Move(1, moves[1]);
+        Move(step % 2, data[step]);
         step++;
     }
 
