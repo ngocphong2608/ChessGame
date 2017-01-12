@@ -21,7 +21,7 @@ public class VisualizeMatch : MonoBehaviour {
     public void LoadMatchData()
     {
         data = new List<string>();
-        string fileName = "Data/FWCCM2016/2016-11-21-Round8.pgn";
+        string fileName = GameManager.Instance.VisualizePath;
         try
         {
             string line;
@@ -73,6 +73,8 @@ public class VisualizeMatch : MonoBehaviour {
         if (step == data.Count)
         {
             Debug.Log("End of game!");
+            Debug.Log("Result: " + result);
+            gameManager.isVisualize = false;
             return;
         }
         Move(step % 2, data[step]);

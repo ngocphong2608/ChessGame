@@ -7,12 +7,27 @@ public class MainGameManager : MonoBehaviour {
     VisualizeMatch visualize;
     float delay = 1;
     float oldTime = 0;
-    bool isVisualize = false;
+    public bool isVisualize = false;
+    public GameObject playBtn;
    
 	// Use this for initialization
 	void Start () {
 		
 	}
+
+    public void PlayGame()
+    {
+        if (GameManager.Instance.GameMode == GameManager.MODE.VISUALIZE)
+        {
+            Debug.Log("Visulize Mode");
+            VisualizeAMatch();
+        }
+        else if (GameManager.Instance.GameMode == GameManager.MODE.PLAYER_VS_PLAYER)
+        {
+            Debug.Log("Player Vs PLayer Mode");
+        }
+        playBtn.SetActive(false);
+    }
 	
 	// Update is called once per frame
 	void Update () {
