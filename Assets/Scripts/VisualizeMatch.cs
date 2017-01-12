@@ -9,6 +9,7 @@ using UnityEngine;
 public class VisualizeMatch : MonoBehaviour {
     List<String> data;
     MainGameManager gameManager;
+    public int step = 0;
 
     public VisualizeMatch(MainGameManager gameManager)
     {
@@ -52,8 +53,20 @@ public class VisualizeMatch : MonoBehaviour {
             String[] moves = data[i].Split(' ');
             Debug.Log("Turn " + (i+1) + ": " + moves[0] + " " + moves[1]);
             Move(0, moves[0]);
+            
             Move(1, moves[1]);
         }
+    }
+
+    public void VisualizeNextStep()
+    {
+        int i = step;
+        String[] moves = data[i].Split(' ');
+        Debug.Log("Turn " + (i + 1) + ": " + moves[0] + " " + moves[1]);
+        Move(0, moves[0]);
+
+        Move(1, moves[1]);
+        step++;
     }
 
     public String Normalize(String move)
@@ -79,7 +92,7 @@ public class VisualizeMatch : MonoBehaviour {
             int n = move.Length;
             int rank = move[n - 1] - '1'; //hang
             int file = move[n - 2] - 'a'; //cot
-            Location dest = new Location(rank, file);
+            Location dest = new Location(file, rank);
             Location src;
 
             if ("KQBNR".Contains(f.ToString())) {

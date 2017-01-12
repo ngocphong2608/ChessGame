@@ -3,9 +3,9 @@ using System.Collections;
 using System;
 
 public class Queen : Chessman {
-    public override string Name()
+    public override string Annotation()
     {
-        return "Queen";
+        return "Q";
     }
 
     public override bool[,] PossibleMove()

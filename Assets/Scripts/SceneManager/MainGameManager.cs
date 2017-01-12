@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MainGameManager : MonoBehaviour {
-
+    VisualizeMatch visualize;
+   
 	// Use this for initialization
 	void Start () {
 		
@@ -18,9 +19,14 @@ public class MainGameManager : MonoBehaviour {
     [ContextMenu("VisualizeAMatch")]
     public void VisualizeAMatch()
     {
-        VisualizeMatch visualize = new VisualizeMatch(this);
+        visualize = new VisualizeMatch(this);
         visualize.LoadMatchData();
-        visualize.Visualize();
+        visualize.VisualizeNextStep();
+    }
+
+    public void StepByStep()
+    {
+        visualize.VisualizeNextStep();
     }
 
     public void KingSideCastling(int turn)

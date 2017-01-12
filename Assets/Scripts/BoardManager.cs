@@ -337,7 +337,7 @@ public class BoardManager : MonoBehaviour
         foreach (GameObject chessObj in activeChessmans)
         {
             Chessman chess = chessObj.GetComponent<Chessman>();
-            if ((chess.isWhite == isWhite) && (chess.Name()[0] == c))
+            if ((chess.isWhite == isWhite) && (chess.Annotation().Equals(c.ToString())))
             {
                 if (chess.CanGo(dst.x, dst.y))
                 {
@@ -375,23 +375,33 @@ public class BoardManager : MonoBehaviour
 
     public void KingSideCastling(int turn)
     {
-        int rank = (turn == 0) ? 0 : 7;
-        if (Chessmans[7, rank] && Chessmans[7, rank].Name().Equals("Rook") 
-            && Chessmans[4, rank] && Chessmans[4, rank].Equals("King"))
+        bool isWhite = (turn == 0);
+        int rank = isWhite ? 0 : 7;
+        if (Chessmans[7, rank] && Chessmans[7, rank].Annotation().Equals("R") 
+            && Chessmans[4, rank] && Chessmans[4, rank].Equals("K"))
         {
-            Chessmans[7, rank].SetPosition(5, rank);
-            Chessmans[4, rank].SetPosition(6, rank);
+            MoveFromTo(7, rank, 5, rank);
+            MoveFromTo(4, rank, 6, rank);
         }
+    }
+
+    private void MoveFromTo(int srcX, int srcY, int dstX, int dstY)
+    {
+        Chessmans[srcX, srcY] = null;
+        selectedChessman.transform.position = GetTileCenter(dstX, dstY);
+        selectedChessman.SetPosition(dstX, dstY);
+        Chessmans[dstX, dstY] = selectedChessman;
     }
 
     public void QueenSideCastling(int turn)
     {
-        int rank = (turn == 0) ? 0 : 7;
-        if (Chessmans[0, rank] && Chessmans[0, rank].Name().Equals("Rook")
-            && Chessmans[4, rank] && Chessmans[4, rank].Equals("King"))
+        bool isWhite = (turn == 0);
+        int rank = isWhite ? 0 : 7;
+        if (Chessmans[0, rank] && Chessmans[0, rank].Annotation().Equals("R")
+            && Chessmans[4, rank] && Chessmans[4, rank].Equals("K"))
         {
-            Chessmans[0, rank].SetPosition(3, rank);
-            Chessmans[4, rank].SetPosition(2, rank);
+            MoveFromTo(0, rank, 3, rank);
+            MoveFromTo(4, rank, 2, rank);
         }
     }
 }
