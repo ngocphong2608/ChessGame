@@ -380,19 +380,32 @@ public class BoardManager : MonoBehaviour
         bool isWhite = (turn == 0);
         int rank = isWhite ? 0 : 7;
         if (Chessmans[7, rank] && Chessmans[7, rank].Annotation().Equals("R") 
-            && Chessmans[4, rank] && Chessmans[4, rank].Equals("K"))
+            && Chessmans[4, rank] && Chessmans[4, rank].Annotation().Equals("K"))
         {
             MoveFromTo(7, rank, 5, rank);
             MoveFromTo(4, rank, 6, rank);
         }
     }
 
+    private GameObject GetChessmanObj(int x, int y)
+    {
+        foreach (GameObject pieceObj in activeChessmans)
+        {
+            Chessman piece = pieceObj.GetComponent<Chessman>();
+            if (piece.CurrentX == x && piece.CurrentY == y)
+                return pieceObj;
+        }
+        return null;
+    }
+
     private void MoveFromTo(int srcX, int srcY, int dstX, int dstY)
     {
+        Chessman chess = Chessmans[srcX, srcY];
+
         Chessmans[srcX, srcY] = null;
-        selectedChessman.transform.position = GetTileCenter(dstX, dstY);
-        selectedChessman.SetPosition(dstX, dstY);
-        Chessmans[dstX, dstY] = selectedChessman;
+        chess.transform.position = GetTileCenter(dstX, dstY);
+        chess.SetPosition(dstX, dstY);
+        Chessmans[dstX, dstY] = chess;
     }
 
     public void QueenSideCastling(int turn)
@@ -400,7 +413,7 @@ public class BoardManager : MonoBehaviour
         bool isWhite = (turn == 0);
         int rank = isWhite ? 0 : 7;
         if (Chessmans[0, rank] && Chessmans[0, rank].Annotation().Equals("R")
-            && Chessmans[4, rank] && Chessmans[4, rank].Equals("K"))
+            && Chessmans[4, rank] && Chessmans[4, rank].Annotation().Equals("K"))
         {
             MoveFromTo(0, rank, 3, rank);
             MoveFromTo(4, rank, 2, rank);
