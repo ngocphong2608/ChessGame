@@ -21,9 +21,6 @@ public class BoardManager : MonoBehaviour
     public static BoardManager Instance { get; set; }
     private bool[,] allowedMoves { get; set; }
 
-    public Material selectedMat;
-    private Material previousMat;
-
     public int[] EnPassantMove { set; get; }
 
     public CameraButtonManager buttonManager;
@@ -103,6 +100,11 @@ public class BoardManager : MonoBehaviour
             Debug.DrawLine(Vector3.forward * (selectionY + 1) + Vector3.right * selectionX,
                 Vector3.forward * selectionY + Vector3.right * (selectionX + 1));
         }
+    }
+
+    public List<GameObject> GetAllPieces()
+    {
+        return activeChessmans;
     }
 
     private void SpawnChessman(int index, int x, int y)
