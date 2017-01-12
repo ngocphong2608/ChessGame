@@ -3,6 +3,10 @@ using System.Collections;
 using System;
 
 public class Bishop : Chessman {
+    public override string Name()
+    {
+        return "Bishop";
+    }
 
     public override bool[,] PossibleMove()
     {

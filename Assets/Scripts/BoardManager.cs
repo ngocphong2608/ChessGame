@@ -138,9 +138,9 @@ public class BoardManager : MonoBehaviour
 
         // White team
         // King
-        SpawnChessman(0, 3, 0);
+        SpawnChessman(0, 4, 0);
         // Queen
-        SpawnChessman(1, 4, 0);
+        SpawnChessman(1, 3, 0);
         // Rooks
         SpawnChessman(2, 0, 0);
         SpawnChessman(2, 7, 0);
@@ -284,10 +284,10 @@ public class BoardManager : MonoBehaviour
             isWhiteTurn = !isWhiteTurn;
 
             // Change Camera Position to other team
-            if (isWhiteTurn)
-                buttonManager.MoveCamera("white");
-            else
-                buttonManager.MoveCamera("black");
+            //if (isWhiteTurn)
+            //    buttonManager.MoveCamera("white");
+            //else
+            //    buttonManager.MoveCamera("black");
         }
 
         //selectedChessman.GetComponentInChildren<MeshRenderer>().material = previousMat;
@@ -337,22 +337,61 @@ public class BoardManager : MonoBehaviour
         foreach (GameObject chessObj in activeChessmans)
         {
             Chessman chess = chessObj.GetComponent<Chessman>();
-            if (chess.isWhite == isWhite)
+            if ((chess.isWhite == isWhite) && (chess.Name()[0] == c))
             {
-                //if (chess.CanGo(dst))
+                if (chess.CanGo(dst.x, dst.y))
+                {
+                    if (disam.Length == 1) //Disambiguating moves
+                    {
+                        if (disam[0] >= '1' && disam[0] <= '9') //rank have to the same
+                        {
+                            if (chess.CurrentY == (disam[0]-'1'))
+                            {
+                                return new Location(chess.CurrentX, chess.CurrentY);
+                            }
+                        }
+                        else if (disam[0] <= 'a' && disam[0] <= 'z') //file have to the same
+                        {
+                            if (chess.CurrentX == (disam[0]-'a'))
+                            {
+                                return new Location(chess.CurrentX, chess.CurrentY);
+                            }
+                        }
+                        else
+                        {
+                            Debug.Log("Unexpected result! " + disam);
+                        }
+                    }
+                    else
+                    {
+                        return new Location(chess.CurrentX, chess.CurrentY);
+                    }
+                }
             }
         }
 
         return lo;
     }
 
-    public void KingCastling(int turn)
+    public void KingSideCastling(int turn)
     {
-        throw new NotImplementedException();
+        int rank = (turn == 0) ? 0 : 7;
+        if (Chessmans[7, rank] && Chessmans[7, rank].Name().Equals("Rook") 
+            && Chessmans[4, rank] && Chessmans[4, rank].Equals("King"))
+        {
+            Chessmans[7, rank].SetPosition(5, rank);
+            Chessmans[4, rank].SetPosition(6, rank);
+        }
     }
 
-    public void QueenCastling(int turn)
+    public void QueenSideCastling(int turn)
     {
-        throw new NotImplementedException();
+        int rank = (turn == 0) ? 0 : 7;
+        if (Chessmans[0, rank] && Chessmans[0, rank].Name().Equals("Rook")
+            && Chessmans[4, rank] && Chessmans[4, rank].Equals("King"))
+        {
+            Chessmans[0, rank].SetPosition(3, rank);
+            Chessmans[4, rank].SetPosition(2, rank);
+        }
     }
 }

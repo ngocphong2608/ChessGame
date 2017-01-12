@@ -1,7 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class Rook : Chessman {
+    public override string Name()
+    {
+        return "Rook";
+    }
 
     public override bool[,] PossibleMove()
     {

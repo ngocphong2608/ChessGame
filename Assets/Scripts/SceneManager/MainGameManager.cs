@@ -16,25 +16,26 @@ public class MainGameManager : MonoBehaviour {
 	}
 
     [ContextMenu("VisualizeAMatch")]
-    void VisualizeAMatch()
+    public void VisualizeAMatch()
     {
         VisualizeMatch visualize = new VisualizeMatch(this);
         visualize.LoadMatchData();
         visualize.Visualize();
     }
 
-    public void KingCastling(int turn)
+    public void KingSideCastling(int turn)
     {
-        BoardManager.Instance.KingCastling(turn);
+        BoardManager.Instance.KingSideCastling(turn);
     }
 
-    public void QueenCastling(int turn)
+    public void QueenSideCastling(int turn)
     {
-        BoardManager.Instance.QueenCastling(turn);
+        BoardManager.Instance.QueenSideCastling(turn);
     }
 
     public Location Find(int turn, char c, Location dst, string disam)
     {
+        Debug.Log("Find: " + c + " dst: " + dst + " dis: " + disam);
         return BoardManager.Instance.Find(turn, c, dst, disam);
     }
 
@@ -42,5 +43,6 @@ public class MainGameManager : MonoBehaviour {
     {
         BoardManager.Instance.SelectChessman(src.x, src.y);
         BoardManager.Instance.MoveChessman(dst.x, dst.y);
+        Debug.Log("Move from " + src + " to " + dst);
     }
 }
