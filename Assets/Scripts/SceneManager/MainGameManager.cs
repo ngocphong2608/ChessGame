@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class MainGameManager : MonoBehaviour {
     VisualizeMatch visualize;
+    float delay = 1;
+    float oldTime = 0;
+    bool isVisualize = false;
    
 	// Use this for initialization
 	void Start () {
@@ -13,7 +16,14 @@ public class MainGameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        if (isVisualize)
+        {
+            if (Time.time - oldTime > delay)
+            {
+                oldTime = Time.time;
+                StepNext();
+            }
+        }
 	}
 
     [ContextMenu("VisualizeAMatch")]
@@ -21,10 +31,15 @@ public class MainGameManager : MonoBehaviour {
     {
         visualize = new VisualizeMatch(this);
         visualize.LoadMatchData();
-        visualize.VisualizeNextStep();
+        isVisualize = true;
     }
 
-    public void StepByStep()
+    public void StopVisualize()
+    {
+        isVisualize = false;
+    }
+
+    public void StepNext()
     {
         visualize.VisualizeNextStep();
     }
