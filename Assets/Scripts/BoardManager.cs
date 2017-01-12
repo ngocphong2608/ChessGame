@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System;
 
-public class BoardManager : MonoBehaviour {
+public class BoardManager : MonoBehaviour
+{
 
     private const float TILE_SIZE = 1.0f;
     private const float TILE_OFFSET = 0.5f;
@@ -66,9 +67,10 @@ public class BoardManager : MonoBehaviour {
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 25f, LayerMask.GetMask("ChessPlan")))
         {
-            selectionX = (int) hit.point.x;
-            selectionY = (int) hit.point.z;
-        } else
+            selectionX = (int)hit.point.x;
+            selectionY = (int)hit.point.z;
+        }
+        else
         {
             selectionX = -1;
             selectionY = -1;
@@ -93,7 +95,7 @@ public class BoardManager : MonoBehaviour {
         }
 
         // Draw selection
-        if (selectionX >= 0  && selectionY >= 0)
+        if (selectionX >= 0 && selectionY >= 0)
         {
             Debug.DrawLine(Vector3.forward * selectionY + Vector3.right * selectionX,
                 Vector3.forward * (selectionY + 1) + Vector3.right * (selectionX + 1));
@@ -106,8 +108,8 @@ public class BoardManager : MonoBehaviour {
     private void SpawnChessman(int index, int x, int y)
     {
         GameObject obj = Instantiate(
-            ChessmanPrefabs[index], 
-            GetTileCenter(x, y), 
+            ChessmanPrefabs[index],
+            GetTileCenter(x, y),
             ChessmanPrefabs[index].transform.rotation) as GameObject;
 
         obj.transform.SetParent(this.transform);
@@ -122,7 +124,7 @@ public class BoardManager : MonoBehaviour {
         origin.x = TILE_SIZE * x + TILE_OFFSET;
         origin.z = TILE_SIZE * z + TILE_OFFSET;
 
-        return origin;  
+        return origin;
     }
 
     //private Vector3 AdjustChessmanPosition(Vector3 pos)
@@ -267,6 +269,18 @@ public class BoardManager : MonoBehaviour {
             selectedChessman.transform.position = GetTileCenter(x, y);
             selectedChessman.SetPosition(x, y);
             Chessmans[x, y] = selectedChessman;
+
+            // Checkmate
+            bool[,] allowedMoves = Chessmans[x, y].PossibleMove();
+            if (IsCheckmate(allowedMoves))
+            {
+                if (isWhiteTurn)
+                    Debug.Log("Black team is checkmated");
+                else
+                    Debug.Log("White team is checkmated");
+            }
+
+            // Change turn
             isWhiteTurn = !isWhiteTurn;
 
             // Change Camera Position to other team
@@ -279,6 +293,25 @@ public class BoardManager : MonoBehaviour {
         //selectedChessman.GetComponentInChildren<MeshRenderer>().material = previousMat;
         BoardHighlights.Instance.HideHighlights();
         selectedChessman = null;
+    }
+
+    private bool IsCheckmate(bool[,] allowedMoves)
+    {
+        if (allowedMoves.Length == 0)
+            return false;
+
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                if (allowedMoves[i, j] && Chessmans[i, j] != null && Chessmans[i, j].GetType() == typeof(King))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void EndGame()
