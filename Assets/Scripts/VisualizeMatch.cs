@@ -8,18 +8,21 @@ using UnityEngine;
 
 public class VisualizeMatch : MonoBehaviour {
     List<String> data;
+    int step = 0;
+    int result = 0;
+
     MainGameManager gameManager;
-    public int step = 0;
+    
 
     public VisualizeMatch(MainGameManager gameManager)
     {
         this.gameManager = gameManager;
     }
 
-    public void LoadMatchData()
+    public void LoadMatchData_Back()
     {
         data = new List<string>();
-        string fileName = "Data/match1.txt";
+        string fileName = "Data/FWCCM2016/2016-11-21-Round8.txt";
         try
         {
             string line;
@@ -33,7 +36,65 @@ public class VisualizeMatch : MonoBehaviour {
                     if (line != null)
                     {
                         //Debug.Log(line.Split('.')[1]);
-                        data.Add(line.Split('.')[1]);
+                        String[] parts = line.Split('.');
+                        if (parts.Length == 2)
+                        {
+                            data.Add(parts[1]);
+                        }
+                        else
+                        {
+                            if (line.Equals("0-1"))
+                                result = -1; //Black win
+                            else if (line.Equals("1-0"))
+                                result = 1; //White win
+                            else
+                                result = 0; //Tie
+                        }
+
+                    }
+                } while (line != null);
+
+                theReader.Close();
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log("{0}\n" + e.Message);
+        }
+    }
+
+    public void LoadMatchData()
+    {
+        data = new List<string>();
+        string fileName = "match1.txt";
+        try
+        {
+            string line;
+            StreamReader theReader = new StreamReader(fileName, Encoding.Default);
+            using (theReader)
+            {
+                do
+                {
+                    line = theReader.ReadLine();
+
+                    if (line != null)
+                    {
+                        //Debug.Log(line.Split('.')[1]);
+                        String[] parts = line.Split('.');
+                        if (parts.Length == 2)
+                        {
+                            data.Add(parts[1]);
+                        }
+                        else
+                        {
+                            if (line.Equals("0-1"))
+                                result = -1; //Black win
+                            else if (line.Equals("1-0"))
+                                result = 1; //White win
+                            else
+                                result = 0; //Tie
+                        }
+
                     }
                 } while (line != null); 
 
@@ -61,6 +122,12 @@ public class VisualizeMatch : MonoBehaviour {
     public void VisualizeNextStep()
     {
         int i = step;
+        if (step == data.Count)
+        {
+            Debug.Log("End of game!");
+            return;
+        }
+
         String[] moves = data[i].Split(' ');
         Debug.Log("Turn " + (i + 1) + ": " + moves[0] + " " + moves[1]);
         Move(0, moves[0]);
@@ -104,7 +171,7 @@ public class VisualizeMatch : MonoBehaviour {
 		        String disam = "";
 		        if (n == 3)
 			        disam += move[0];
-		        src = gameManager.Find(turn, 'P', dest, disam);
+		        src = gameManager.Find(turn, 'P', dest, disam); //Find Pawn
 	        }
             gameManager.Move(src, dest);
         }

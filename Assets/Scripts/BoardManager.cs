@@ -352,7 +352,7 @@ public class BoardManager : MonoBehaviour
                                 return new Location(chess.CurrentX, chess.CurrentY);
                             }
                         }
-                        else if (disam[0] <= 'a' && disam[0] <= 'z') //file have to the same
+                        else if (disam[0] >= 'a' && disam[0] <= 'z') //file have to the same
                         {
                             if (chess.CurrentX == (disam[0]-'a'))
                             {
