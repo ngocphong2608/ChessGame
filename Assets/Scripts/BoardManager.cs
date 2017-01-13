@@ -215,6 +215,8 @@ public class BoardManager : MonoBehaviour
             // Eat chessman
             if (c != null && c.isWhite != isWhiteTurn)
             {
+                RotateChessmans(c, selectedChessman, 2);
+
                 EatChessman(c);
             }
 
@@ -240,6 +242,16 @@ public class BoardManager : MonoBehaviour
         //selectedChessman.GetComponentInChildren<MeshRenderer>().material = previousMat;
         BoardHighlights.Instance.HideHighlights();
         selectedChessman = null;
+    }
+
+    private void RotateChessmans(Chessman c, Chessman selectedChessman, int seconds)
+    {
+        InvokeRepeating("RotateChessman", 0f, 0.1f);
+    }
+
+    private void RotateChessman(Chessman c)
+    {
+        c.transform.Rotate(Vector3.right * 10);
     }
 
     private void MoveSelectedChessmanTo(int x, int y)
@@ -270,6 +282,7 @@ public class BoardManager : MonoBehaviour
                 c = Chessmans[x, y - 1];
             else
                 c = Chessmans[x, y + 1];
+
             activeChessmans.Remove(c.gameObject);
             Destroy(c.gameObject);
         }
@@ -279,14 +292,15 @@ public class BoardManager : MonoBehaviour
         // EnPassant
         if (selectedChessman.GetType() == typeof(Pawn))
         {
-            if (y == 7)
+            // check if pawn steps on final line, it become Queen
+            if (y == 7) // white team
             {
                 activeChessmans.Remove(selectedChessman.gameObject);
                 Destroy(selectedChessman.gameObject);
                 SpawnChessman(1, x, y);
                 selectedChessman = Chessmans[x, y];
             }
-            else if (y == 0)
+            else if (y == 0) // black team
             {
                 activeChessmans.Remove(selectedChessman.gameObject);
                 Destroy(selectedChessman.gameObject);
