@@ -215,73 +215,18 @@ public class BoardManager : MonoBehaviour
             // Eat chessman
             if (c != null && c.isWhite != isWhiteTurn)
             {
-                if (c.GetType() == typeof(King))
-                {
-                    EndGame();
-                    return;
-                }
-
-                activeChessmans.Remove(c.gameObject);
-                Destroy(c.gameObject);
+                EatChessman(c);
             }
 
-            if (x == EnPassantMove[0] && y == EnPassantMove[1])
-            {
-                if (isWhiteTurn)
-                    c = Chessmans[x, y - 1];
-                else
-                    c = Chessmans[x, y + 1];
-                activeChessmans.Remove(c.gameObject);
-                Destroy(c.gameObject);
-            }
+            // Check EnPassantMove
+            ProcessEnPassantMove(c, x, y);
 
-            EnPassantMove[0] = -1;
-            EnPassantMove[1] = -1;
-            // EnPassant
-            if (selectedChessman.GetType() == typeof(Pawn))
-            {
-                if (y == 7)
-                {
-                    activeChessmans.Remove(selectedChessman.gameObject);
-                    Destroy(selectedChessman.gameObject);
-                    SpawnChessman(1, x, y);
-                    selectedChessman = Chessmans[x, y];
-                }
-                else if (y == 0)
-                {
-                    activeChessmans.Remove(selectedChessman.gameObject);
-                    Destroy(selectedChessman.gameObject);
-                    SpawnChessman(7, x, y);
-                    selectedChessman = Chessmans[x, y];
-                }
-
-                if (selectedChessman.CurrentY == 1 && y == 3)
-                {
-                    EnPassantMove[0] = x;
-                    EnPassantMove[1] = y - 1;
-                }
-                else if (selectedChessman.CurrentY == 6 && y == 4)
-                {
-                    EnPassantMove[0] = x;
-                    EnPassantMove[1] = y + 1;
-                }
-            }
-
-            Chessmans[selectedChessman.CurrentX, selectedChessman.CurrentY] = null;
-            selectedChessman.transform.position = GetTileCenter(x, y);
-            selectedChessman.SetPosition(x, y);
-            Chessmans[x, y] = selectedChessman;
-
+            // Move selected chessman to x, y position
+            MoveSelectedChessmanTo(x, y);
+            
             // Checkmate
-            bool[,] allowedMoves = Chessmans[x, y].PossibleMove();
-            if (IsCheckmate(allowedMoves))
-            {
-                if (isWhiteTurn)
-                    Debug.Log("Black team is checkmated");
-                else
-                    Debug.Log("White team is checkmated");
-            }
-
+            ProcessCheckmate(x, y);
+            
             // Change turn
             isWhiteTurn = !isWhiteTurn;
 
@@ -295,6 +240,85 @@ public class BoardManager : MonoBehaviour
         //selectedChessman.GetComponentInChildren<MeshRenderer>().material = previousMat;
         BoardHighlights.Instance.HideHighlights();
         selectedChessman = null;
+    }
+
+    private void MoveSelectedChessmanTo(int x, int y)
+    {
+        Chessmans[selectedChessman.CurrentX, selectedChessman.CurrentY] = null;
+        selectedChessman.transform.position = GetTileCenter(x, y);
+        selectedChessman.SetPosition(x, y);
+        Chessmans[x, y] = selectedChessman;
+    }
+
+    private void ProcessCheckmate(int x, int y)
+    {
+        bool[,] allowedMoves = Chessmans[x, y].PossibleMove();
+        if (IsCheckmate(allowedMoves))
+        {
+            if (isWhiteTurn)
+                Debug.Log("Black team is checkmated");
+            else
+                Debug.Log("White team is checkmated");
+        }
+    }
+
+    private void ProcessEnPassantMove(Chessman c, int x, int y)
+    {
+        if (x == EnPassantMove[0] && y == EnPassantMove[1])
+        {
+            if (isWhiteTurn)
+                c = Chessmans[x, y - 1];
+            else
+                c = Chessmans[x, y + 1];
+            activeChessmans.Remove(c.gameObject);
+            Destroy(c.gameObject);
+        }
+
+        EnPassantMove[0] = -1;
+        EnPassantMove[1] = -1;
+        // EnPassant
+        if (selectedChessman.GetType() == typeof(Pawn))
+        {
+            if (y == 7)
+            {
+                activeChessmans.Remove(selectedChessman.gameObject);
+                Destroy(selectedChessman.gameObject);
+                SpawnChessman(1, x, y);
+                selectedChessman = Chessmans[x, y];
+            }
+            else if (y == 0)
+            {
+                activeChessmans.Remove(selectedChessman.gameObject);
+                Destroy(selectedChessman.gameObject);
+                SpawnChessman(7, x, y);
+                selectedChessman = Chessmans[x, y];
+            }
+
+            if (selectedChessman.CurrentY == 1 && y == 3)
+            {
+                EnPassantMove[0] = x;
+                EnPassantMove[1] = y - 1;
+            }
+            else if (selectedChessman.CurrentY == 6 && y == 4)
+            {
+                EnPassantMove[0] = x;
+                EnPassantMove[1] = y + 1;
+            }
+        }
+    }
+
+    private void EatChessman(Chessman c)
+    {
+        if (c.GetType() == typeof(King))
+        {
+            EndGame();
+            return;
+        }
+
+        //RotateChessman(c, Chessmans[x, y], 2);
+
+        activeChessmans.Remove(c.gameObject);
+        Destroy(c.gameObject);
     }
 
     private bool IsCheckmate(bool[,] allowedMoves)
