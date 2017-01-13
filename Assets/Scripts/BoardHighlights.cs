@@ -8,11 +8,13 @@ public class BoardHighlights : MonoBehaviour {
 
     public GameObject highlightPrefab;
     private List<GameObject> highlights;
+    private GameObject parent;
 
     private void Start()
     {
         Instance = this;
         highlights = new List<GameObject>();
+        parent = new GameObject("Highlights");
     }
 
     public GameObject GetHighlightObject()
@@ -22,6 +24,7 @@ public class BoardHighlights : MonoBehaviour {
         if (go == null)
         {
             go = Instantiate(highlightPrefab);
+            go.transform.parent = parent.transform;
             highlights.Add(go);
         }
 
