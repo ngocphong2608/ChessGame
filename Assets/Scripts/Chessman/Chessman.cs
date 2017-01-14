@@ -10,10 +10,30 @@ public abstract class Chessman : MonoBehaviour {
     public abstract string Annotation();
 
     private Quaternion originRotation;
+    private float speed = 1f;
+    private float incSpeed = 0.01f;
 
     private void Start()
     {
         originRotation = transform.rotation;
+    }
+
+    private void Update()
+    {
+        if (newPosition != Vector3.zero)
+        {
+            float step = speed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, newPosition, step);
+
+            speed += incSpeed;
+
+            if (transform.position == newPosition)
+            {
+                newPosition = Vector3.zero;
+                speed = 1f;
+            }
+                
+        }
     }
 
     public void SetPosition(int x, int y)
@@ -72,8 +92,10 @@ public abstract class Chessman : MonoBehaviour {
 
     private void Move()
     {
-        transform.position = newPosition;
-        CancelInvoke("Rotate");
+        //transform.position = newPosition;
+
+        // stop rotation
+        // CancelInvoke("Rotate");
 
         // restore origin rotation
         transform.rotation = originRotation;
