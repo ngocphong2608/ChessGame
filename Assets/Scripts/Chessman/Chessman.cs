@@ -13,9 +13,23 @@ public abstract class Chessman : MonoBehaviour {
     private float speed = 1f;
     private float incSpeed = 0.01f;
 
+    private Animator anim;
+
     private void Start()
     {
         originRotation = transform.rotation;
+
+        Animator[] anims = GetComponentsInChildren<Animator>();
+
+        anim = anims[0];
+
+        if (anims.Length >= 2)
+            anim = anims[anims.Length - 1];
+
+        if (anim == null)
+        {
+            Debug.Log("Chessman's animator is null");
+        }
     }
 
     private void Update()
@@ -61,6 +75,7 @@ public abstract class Chessman : MonoBehaviour {
 
     internal void RotateEach(float seconds)
     {
+        anim.SetTrigger("KillChessman");
         InvokeRepeating("Rotate", 0f, seconds);
     }
 
