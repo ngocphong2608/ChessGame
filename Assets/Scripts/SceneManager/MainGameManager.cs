@@ -12,9 +12,11 @@ public class MainGameManager : MonoBehaviour {
     public GameObject playBtn;
     public Animator animator;
     bool isFirst = true;
-   
-	// Use this for initialization
-	void Start () {
+    float commandDelay = 1.0f;
+    float commandDelayOld = 0f;
+
+    // Use this for initialization
+    void Start () {
     }
 
     public void PlayGame()
@@ -33,7 +35,7 @@ public class MainGameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (isFirst) //Xong animation thi thuc hien 
+        if (isFirst) //Xong animation thi thuc hien PlayGame() 
         {
             if (animator.IsInTransition(0))
             {
@@ -45,7 +47,14 @@ public class MainGameManager : MonoBehaviour {
 
         if (isVisualize)
         {
-            if (Time.time - oldTime > delay)
+            if (commands.Count > 0)
+            {
+                if (Time.time - commandDelayOld > commandDelay)
+                {
+                    processCommand(commands.Dequeue());
+                    commandDelayOld = Time.time;
+                }
+            } else if (Time.time - oldTime > delay)
             {
                 oldTime = Time.time;
                 StepNext();
@@ -89,8 +98,37 @@ public class MainGameManager : MonoBehaviour {
 
     public void Move(Location src, Location dst)
     {
-        BoardManager.Instance.SelectChessman(src.x, src.y);
-        BoardManager.Instance.MoveChessman(dst.x, dst.y);
+        //BoardManager.Instance.SelectChessman(src.x, src.y);
+        //BoardManager.Instance.MoveChessman(dst.x, dst.y);
+        commands.Enqueue(new Command(0, src.x, src.y));
+        commands.Enqueue(new Command(1, dst.x, dst.y));
         Debug.Log("Move from " + src + " to " + dst);
+    }
+
+
+    Queue<Command> commands = new Queue<Command>();
+    struct Command
+    {
+        public int type;
+        public int x, y;
+        public Command(int type, int x, int y)
+        {
+            this.type = type;
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    void processCommand(Command cmd)
+    {
+        if (cmd.type == 0)
+        {
+            BoardManager.Instance.SelectChessman(cmd.x, cmd.y);
+
+        }
+        else if (cmd.type == 1)
+        {
+            BoardManager.Instance.MoveChessman(cmd.x, cmd.y);
+        }
     }
 }
