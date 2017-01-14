@@ -16,7 +16,7 @@ public class King : Chessman {
         int[] dy = { 1, 1, 1, 0, -1, -1, -1, 0 };
         int x, y;
 
-        bool[,] enemyMoves = GetAllEnemyMoves(BoardManager.Instance.GetAllPieces());
+        bool[,] enemyMoves = GetAllEnemyMoves(BoardManager.Instance.GetAllChessmans());
 
         for (int i = 0; i < 8; i++)
         {
@@ -41,12 +41,14 @@ public class King : Chessman {
         List<bool[,]> listMoves = new List<bool[,]>();
         foreach (GameObject go in enemies)
         {
-            Chessman chessman = go.GetComponent<Chessman>();
-            if (chessman.isWhite != isWhite)
+            if (go != null)
             {
-                listMoves.Add(chessman.PossibleEat());
+                Chessman chessman = go.GetComponent<Chessman>();
+                if (chessman.isWhite != isWhite)
+                {
+                    listMoves.Add(chessman.PossibleEat());
+                }
             }
-
         }
 
         bool[,] result = new bool[8, 8];

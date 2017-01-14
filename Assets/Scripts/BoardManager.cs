@@ -4,6 +4,8 @@ using System;
 
 public class BoardManager : MonoBehaviour
 {
+    private const float DELAY_TIME = 1F;
+    private const float ROTATE_TIME = 0.1F;
 
     private const float TILE_SIZE = 1.0f;
     private const float TILE_OFFSET = 0.5f;
@@ -62,13 +64,25 @@ public class BoardManager : MonoBehaviour
             return;
 
         RaycastHit hit;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 25f, LayerMask.GetMask("ChessPlan")))
+
+        if (Physics.Raycast(
+            Camera.main.ScreenPointToRay(Input.mousePosition),
+            out hit, 25f,
+            LayerMask.GetMask("ClickMask")))
+        {
+            selectionX = -1;
+            selectionY = -1;
+            //Debug.Log("Click on mask");
+        }
+        else if (Physics.Raycast(
+            Camera.main.ScreenPointToRay(Input.mousePosition),
+            out hit, 25f,
+            LayerMask.GetMask("ChessPlan")))
         {
             selectionX = (int)hit.point.x;
             selectionY = (int)hit.point.z;
-        }
-        else
-        {
+            //Debug.Log("Click on Chessboard");
+        } else {
             selectionX = -1;
             selectionY = -1;
         }
@@ -102,7 +116,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public List<GameObject> GetAllPieces()
+    public List<GameObject> GetAllChessmans()
     {
         return activeChessmans;
     }
@@ -211,53 +225,87 @@ public class BoardManager : MonoBehaviour
         if (allowedMoves[x, y])
         {
             Chessman c = Chessmans[x, y];
+            float delays = 0f;
+
+            // Check EnPassantMove
+            ProcessEnPassantMove(c, x, y, out delays);
 
             // Eat chessman
             if (c != null && c.isWhite != isWhiteTurn)
             {
-                RotateChessmans(c, selectedChessman, 2);
+                delays = DELAY_TIME;
 
-                EatChessman(c);
+                c.RotateEach(ROTATE_TIME);
+                c.DestroyAfter(delays);
+
+                selectedChessman.RotateEach(ROTATE_TIME);
+
+                if (c.GetType() == typeof(King))
+                {
+                    EndGame();
+                    return;
+                }
             }
 
-            // Check EnPassantMove
-            ProcessEnPassantMove(c, x, y);
+            // check if pawn step on final line
+            ProcessIfPawnStepOnFinalLine(x, y);
 
             // Move selected chessman to x, y position
-            MoveSelectedChessmanTo(x, y);
-            
+            MoveSelectedChessmanTo(x, y, delays);
+
             // Checkmate
             ProcessCheckmate(x, y);
-            
+
             // Change turn
             isWhiteTurn = !isWhiteTurn;
-
-            // Change Camera Position to other team
-            //if (isWhiteTurn)
-            //    buttonManager.MoveCamera("white");
-            //else
-            //    buttonManager.MoveCamera("black");
         }
 
-        //selectedChessman.GetComponentInChildren<MeshRenderer>().material = previousMat;
         BoardHighlights.Instance.HideHighlights();
         selectedChessman = null;
     }
 
-    private void RotateChessmans(Chessman c, Chessman selectedChessman, int seconds)
+    private void ProcessIfPawnStepOnFinalLine(int x, int y)
     {
-        InvokeRepeating("RotateChessman", 0f, 0.1f);
+        if (selectedChessman.GetType() == typeof(Pawn))
+        {
+            // check if pawn steps on final line, it becomes Queen
+            if (y == 7) // white team
+            {
+                int currentX = selectedChessman.CurrentX, currentY = selectedChessman.CurrentY;
+                // remove selected chessman
+                activeChessmans.Remove(selectedChessman.gameObject);
+                Destroy(selectedChessman.gameObject);
+
+                // spawn new chessman
+                SpawnChessman(1, currentX, currentY);
+                selectedChessman = Chessmans[currentX, currentY];
+
+                // rotate the chessman
+                selectedChessman.RotateEach(ROTATE_TIME);
+            }
+            else if (y == 0) // black team
+            {
+                int currentX = selectedChessman.CurrentX, currentY = selectedChessman.CurrentY;
+                // remove selected chessman
+                activeChessmans.Remove(selectedChessman.gameObject);
+                Destroy(selectedChessman.gameObject);
+
+                // spawn new chessman
+                SpawnChessman(7, currentX, currentY);
+                selectedChessman = Chessmans[currentX, currentY];
+
+                // rotate the chessman
+                selectedChessman.RotateEach(ROTATE_TIME);
+            }
+        }
     }
 
-    private void RotateChessman(Chessman c)
-    {
-        c.transform.Rotate(Vector3.right * 10);
-    }
-
-    private void MoveSelectedChessmanTo(int x, int y)
+    private void MoveSelectedChessmanTo(int x, int y, float delays)
     {
         Chessmans[selectedChessman.CurrentX, selectedChessman.CurrentY] = null;
-        selectedChessman.transform.position = GetTileCenter(x, y);
+
+        selectedChessman.MoveAfter(delays, GetTileCenter(x, y));
+
         selectedChessman.SetPosition(x, y);
         Chessmans[x, y] = selectedChessman;
     }
@@ -274,8 +322,9 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void ProcessEnPassantMove(Chessman c, int x, int y)
+    private void ProcessEnPassantMove(Chessman c, int x, int y, out float delay)
     {
+        delay = 0;
         if (x == EnPassantMove[0] && y == EnPassantMove[1])
         {
             if (isWhiteTurn)
@@ -283,8 +332,12 @@ public class BoardManager : MonoBehaviour
             else
                 c = Chessmans[x, y + 1];
 
-            activeChessmans.Remove(c.gameObject);
-            Destroy(c.gameObject);
+            c.RotateEach(ROTATE_TIME);
+            c.DestroyAfter(DELAY_TIME);
+
+            selectedChessman.RotateEach(ROTATE_TIME);
+
+            delay = DELAY_TIME;
         }
 
         EnPassantMove[0] = -1;
@@ -292,22 +345,6 @@ public class BoardManager : MonoBehaviour
         // EnPassant
         if (selectedChessman.GetType() == typeof(Pawn))
         {
-            // check if pawn steps on final line, it become Queen
-            if (y == 7) // white team
-            {
-                activeChessmans.Remove(selectedChessman.gameObject);
-                Destroy(selectedChessman.gameObject);
-                SpawnChessman(1, x, y);
-                selectedChessman = Chessmans[x, y];
-            }
-            else if (y == 0) // black team
-            {
-                activeChessmans.Remove(selectedChessman.gameObject);
-                Destroy(selectedChessman.gameObject);
-                SpawnChessman(7, x, y);
-                selectedChessman = Chessmans[x, y];
-            }
-
             if (selectedChessman.CurrentY == 1 && y == 3)
             {
                 EnPassantMove[0] = x;
@@ -319,20 +356,6 @@ public class BoardManager : MonoBehaviour
                 EnPassantMove[1] = y + 1;
             }
         }
-    }
-
-    private void EatChessman(Chessman c)
-    {
-        if (c.GetType() == typeof(King))
-        {
-            EndGame();
-            return;
-        }
-
-        //RotateChessman(c, Chessmans[x, y], 2);
-
-        activeChessmans.Remove(c.gameObject);
-        Destroy(c.gameObject);
     }
 
     private bool IsCheckmate(bool[,] allowedMoves)
@@ -385,14 +408,14 @@ public class BoardManager : MonoBehaviour
                     {
                         if (disam[0] >= '1' && disam[0] <= '9') //rank have to the same
                         {
-                            if (chess.CurrentY == (disam[0]-'1'))
+                            if (chess.CurrentY == (disam[0] - '1'))
                             {
                                 return new Location(chess.CurrentX, chess.CurrentY);
                             }
                         }
                         else if (disam[0] >= 'a' && disam[0] <= 'z') //file have to the same
                         {
-                            if (chess.CurrentX == (disam[0]-'a'))
+                            if (chess.CurrentX == (disam[0] - 'a'))
                             {
                                 return new Location(chess.CurrentX, chess.CurrentY);
                             }
@@ -417,7 +440,7 @@ public class BoardManager : MonoBehaviour
     {
         bool isWhite = (turn == 0);
         int rank = isWhite ? 0 : 7;
-        if (Chessmans[7, rank] && Chessmans[7, rank].Annotation().Equals("R") 
+        if (Chessmans[7, rank] && Chessmans[7, rank].Annotation().Equals("R")
             && Chessmans[4, rank] && Chessmans[4, rank].Annotation().Equals("K"))
         {
             MoveFromTo(7, rank, 5, rank);
