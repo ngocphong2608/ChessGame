@@ -238,7 +238,7 @@ public class BoardManager : MonoBehaviour
                 c.RotateEach(ROTATE_TIME);
                 c.DestroyAfter(delays);
 
-                selectedChessman.RotateEach(ROTATE_TIME);
+                //selectedChessman.RotateEach(ROTATE_TIME);
 
                 if (c.GetType() == typeof(King))
                 {
@@ -295,7 +295,7 @@ public class BoardManager : MonoBehaviour
                 selectedChessman = Chessmans[currentX, currentY];
 
                 // rotate the chessman
-                selectedChessman.RotateEach(ROTATE_TIME);
+                // selectedChessman.RotateEach(ROTATE_TIME);
             }
         }
     }
@@ -335,7 +335,7 @@ public class BoardManager : MonoBehaviour
             c.RotateEach(ROTATE_TIME);
             c.DestroyAfter(DELAY_TIME);
 
-            selectedChessman.RotateEach(ROTATE_TIME);
+            //selectedChessman.RotateEach(ROTATE_TIME);
 
             delay = DELAY_TIME;
         }
