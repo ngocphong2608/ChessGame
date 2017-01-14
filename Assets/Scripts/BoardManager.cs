@@ -4,6 +4,8 @@ using System;
 
 public class BoardManager : MonoBehaviour
 {
+    private const float DELAY_TIME = 1F;
+    private const float ROTATE_TIME = 0.1F;
 
     private const float TILE_SIZE = 1.0f;
     private const float TILE_OFFSET = 0.5f;
@@ -225,21 +227,25 @@ public class BoardManager : MonoBehaviour
             Chessman c = Chessmans[x, y];
             float delays = 0f;
 
+            // Check EnPassantMove
+            ProcessEnPassantMove(c, x, y, out delays);
+
             // Eat chessman
             if (c != null && c.isWhite != isWhiteTurn)
             {
-                delays = 2f;
+                delays = DELAY_TIME;
 
-                c.RotateEach(0.1f);
+                c.RotateEach(ROTATE_TIME);
                 c.DestroyAfter(delays);
 
-                selectedChessman.RotateEach(0.1f);
-                
-                //EatChessman(c);
-            }
+                selectedChessman.RotateEach(ROTATE_TIME);
 
-            // Check EnPassantMove
-            ProcessEnPassantMove(c, x, y);
+                if (c.GetType() == typeof(King))
+                {
+                    EndGame();
+                    return;
+                }
+            }
 
             // Move selected chessman to x, y position
             MoveSelectedChessmanTo(x, y, delays);
@@ -278,8 +284,9 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void ProcessEnPassantMove(Chessman c, int x, int y)
+    private void ProcessEnPassantMove(Chessman c, int x, int y, out float delay)
     {
+        delay = 0;
         if (x == EnPassantMove[0] && y == EnPassantMove[1])
         {
             if (isWhiteTurn)
@@ -287,8 +294,12 @@ public class BoardManager : MonoBehaviour
             else
                 c = Chessmans[x, y + 1];
 
-            activeChessmans.Remove(c.gameObject);
-            Destroy(c.gameObject);
+            c.RotateEach(ROTATE_TIME);
+            c.DestroyAfter(DELAY_TIME);
+
+            selectedChessman.RotateEach(ROTATE_TIME);
+
+            delay = DELAY_TIME;
         }
 
         EnPassantMove[0] = -1;
@@ -323,20 +334,6 @@ public class BoardManager : MonoBehaviour
                 EnPassantMove[1] = y + 1;
             }
         }
-    }
-
-    private void EatChessman(Chessman c)
-    {
-        if (c.GetType() == typeof(King))
-        {
-            EndGame();
-            return;
-        }
-
-        //RotateChessman(c, Chessmans[x, y], 2);
-
-        activeChessmans.Remove(c.gameObject);
-        Destroy(c.gameObject);
     }
 
     private bool IsCheckmate(bool[,] allowedMoves)

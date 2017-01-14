@@ -44,8 +44,8 @@ public abstract class Chessman : MonoBehaviour {
         InvokeRepeating("Rotate", 0f, seconds);
     }
 
-    private int t = 10;
-    private int dt = 3;
+    private int t = 5;
+    private int dt = 5;
     private void Rotate()
     {
         transform.Rotate(Vector3.up * t);
@@ -77,7 +77,7 @@ public abstract class Chessman : MonoBehaviour {
         // restore origin rotation
         transform.rotation = originRotation;
 
-        // retore rotate speed
+        // restore rotate speed
         t = 10;
     }
 }
