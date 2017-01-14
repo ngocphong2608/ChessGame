@@ -11,9 +11,11 @@ public abstract class Chessman : MonoBehaviour {
 
     private Quaternion originRotation;
     private float speed = 1f;
-    private float incSpeed = 0.01f;
+    private float incSpeed = 0.1f;
 
     private Animator anim;
+
+    private bool startMove = false;
 
     private void Start()
     {
@@ -34,7 +36,7 @@ public abstract class Chessman : MonoBehaviour {
 
     private void Update()
     {
-        if (newPosition != Vector3.zero)
+        if (startMove)
         {
             float step = speed * Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, newPosition, step);
@@ -44,6 +46,7 @@ public abstract class Chessman : MonoBehaviour {
             if (transform.position == newPosition)
             {
                 newPosition = Vector3.zero;
+                startMove = false;
                 speed = 1f;
             }
                 
@@ -107,15 +110,16 @@ public abstract class Chessman : MonoBehaviour {
 
     private void Move()
     {
+        startMove = true;
         //transform.position = newPosition;
 
         // stop rotation
         // CancelInvoke("Rotate");
 
         // restore origin rotation
-        transform.rotation = originRotation;
+        //transform.rotation = originRotation;
 
         // restore rotate speed
-        t = 10;
+        //t = 10;
     }
 }
