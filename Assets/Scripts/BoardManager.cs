@@ -44,15 +44,18 @@ public class BoardManager : MonoBehaviour
         {
             if (selectionX >= 0 && selectionY >= 0)
             {
-                if (selectedChessman == null)
+                if (GameManager.Instance.GameMode == GameManager.MODE.PLAYER_VS_PLAYER)
                 {
-                    // select the chessman
-                    SelectChessman(selectionX, selectionY);
-                }
-                else
-                {
-                    // move the chessman
-                    MoveChessman(selectionX, selectionY);
+                    if (selectedChessman == null)
+                    {
+                        // select the chessman
+                        SelectChessman(selectionX, selectionY);
+                    }
+                    else
+                    {
+                        // move the chessman
+                        MoveChessman(selectionX, selectionY);
+                    }
                 }
             }
         }
