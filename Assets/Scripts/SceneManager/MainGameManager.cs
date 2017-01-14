@@ -6,7 +6,7 @@ using UnityEngine;
 public class MainGameManager : MonoBehaviour {
     VisualizeMatch visualize;
 
-    float delay = 2;
+    float delay = 3f;
     float oldTime = 0;
     public bool isVisualize = false;
     public GameObject playBtn;
