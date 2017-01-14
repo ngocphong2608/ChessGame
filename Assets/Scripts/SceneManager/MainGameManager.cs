@@ -12,8 +12,13 @@ public class MainGameManager : MonoBehaviour {
    
 	// Use this for initialization
 	void Start () {
-		
-	}
+        MoveCameraAroundOnStart();
+    }
+
+    private void MoveCameraAroundOnStart()
+    {
+
+    }
 
     public void PlayGame()
     {
