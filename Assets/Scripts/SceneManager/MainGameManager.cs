@@ -5,19 +5,16 @@ using UnityEngine;
 
 public class MainGameManager : MonoBehaviour {
     VisualizeMatch visualize;
+
     float delay = 2;
     float oldTime = 0;
     public bool isVisualize = false;
     public GameObject playBtn;
+    public Animator animator;
+    bool isFirst = true;
    
 	// Use this for initialization
 	void Start () {
-        MoveCameraAroundOnStart();
-    }
-
-    private void MoveCameraAroundOnStart()
-    {
-
     }
 
     public void PlayGame()
@@ -31,11 +28,21 @@ public class MainGameManager : MonoBehaviour {
         {
             Debug.Log("Player Vs PLayer Mode");
         }
-        playBtn.SetActive(false);
+        //playBtn.SetActive(false);
     }
 	
 	// Update is called once per frame
 	void Update () {
+        if (isFirst) //Xong animation thi thuc hien 
+        {
+            if (animator.IsInTransition(0))
+            {
+                PlayGame();
+                isFirst = false;
+            }
+        }
+        
+
         if (isVisualize)
         {
             if (Time.time - oldTime > delay)
