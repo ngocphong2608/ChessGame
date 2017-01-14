@@ -116,7 +116,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public List<GameObject> GetAllPieces()
+    public List<GameObject> GetAllChessmans()
     {
         return activeChessmans;
     }
@@ -247,6 +247,9 @@ public class BoardManager : MonoBehaviour
                 }
             }
 
+            // check if pawn step on final line
+            ProcessIfPawnStepOnFinalLine(x, y);
+
             // Move selected chessman to x, y position
             MoveSelectedChessmanTo(x, y, delays);
 
@@ -261,6 +264,41 @@ public class BoardManager : MonoBehaviour
         selectedChessman = null;
     }
 
+    private void ProcessIfPawnStepOnFinalLine(int x, int y)
+    {
+        if (selectedChessman.GetType() == typeof(Pawn))
+        {
+            // check if pawn steps on final line, it becomes Queen
+            if (y == 7) // white team
+            {
+                int currentX = selectedChessman.CurrentX, currentY = selectedChessman.CurrentY;
+                // remove selected chessman
+                activeChessmans.Remove(selectedChessman.gameObject);
+                Destroy(selectedChessman.gameObject);
+
+                // spawn new chessman
+                SpawnChessman(1, currentX, currentY);
+                selectedChessman = Chessmans[currentX, currentY];
+
+                // rotate the chessman
+                selectedChessman.RotateEach(ROTATE_TIME);
+            }
+            else if (y == 0) // black team
+            {
+                int currentX = selectedChessman.CurrentX, currentY = selectedChessman.CurrentY;
+                // remove selected chessman
+                activeChessmans.Remove(selectedChessman.gameObject);
+                Destroy(selectedChessman.gameObject);
+
+                // spawn new chessman
+                SpawnChessman(7, currentX, currentY);
+                selectedChessman = Chessmans[currentX, currentY];
+
+                // rotate the chessman
+                selectedChessman.RotateEach(ROTATE_TIME);
+            }
+        }
+    }
 
     private void MoveSelectedChessmanTo(int x, int y, float delays)
     {
@@ -307,22 +345,6 @@ public class BoardManager : MonoBehaviour
         // EnPassant
         if (selectedChessman.GetType() == typeof(Pawn))
         {
-            // check if pawn steps on final line, it become Queen
-            if (y == 7) // white team
-            {
-                activeChessmans.Remove(selectedChessman.gameObject);
-                Destroy(selectedChessman.gameObject);
-                SpawnChessman(1, x, y);
-                selectedChessman = Chessmans[x, y];
-            }
-            else if (y == 0) // black team
-            {
-                activeChessmans.Remove(selectedChessman.gameObject);
-                Destroy(selectedChessman.gameObject);
-                SpawnChessman(7, x, y);
-                selectedChessman = Chessmans[x, y];
-            }
-
             if (selectedChessman.CurrentY == 1 && y == 3)
             {
                 EnPassantMove[0] = x;
