@@ -59,6 +59,7 @@ public abstract class Chessman : MonoBehaviour {
 
     private void DestroyGameObject()
     {
+        BoardManager.Instance.GetAllChessmans().Remove(gameObject);
         Destroy(gameObject);
     }
 

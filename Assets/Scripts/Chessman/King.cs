@@ -16,7 +16,7 @@ public class King : Chessman {
         int[] dy = { 1, 1, 1, 0, -1, -1, -1, 0 };
         int x, y;
 
-        bool[,] enemyMoves = GetAllEnemyMoves(BoardManager.Instance.GetAllPieces());
+        bool[,] enemyMoves = GetAllEnemyMoves(BoardManager.Instance.GetAllChessmans());
 
         for (int i = 0; i < 8; i++)
         {
