@@ -17,6 +17,45 @@ public abstract class Chessman : MonoBehaviour {
 
     private bool startMove = false;
 
+
+    private AudioSource _audioSource = null;
+    private AudioSource AudioSource
+    {
+        get
+        {
+            if (_audioSource == null)
+            {
+                this.gameObject.AddComponent<AudioSource>();
+                return this.gameObject.GetComponent<AudioSource>();
+            }
+            return _audioSource;
+        }
+    }
+    private static AudioClip _manDeadAudio;
+    private static AudioClip ManDeadAudio
+    {
+        get {
+               if (_manDeadAudio == null)
+            {
+                _manDeadAudio = Resources.Load<AudioClip>("Sound/Game/dead_man");
+            }
+            return _manDeadAudio;
+        }
+    }
+
+    private static AudioClip _moveSurfAudio;
+    private static AudioClip MoveSurfAudio
+    {
+        get
+        {
+            if (_moveSurfAudio == null)
+            {
+                _moveSurfAudio = Resources.Load<AudioClip>("Sound/Game/move_surf");
+            }
+            return _moveSurfAudio;
+        }
+    }
+
     private void Start()
     {
         originRotation = transform.rotation;
@@ -92,6 +131,7 @@ public abstract class Chessman : MonoBehaviour {
 
     internal void DestroyAfter(float seconds)
     {
+        AudioSource.PlayOneShot(ManDeadAudio);
         Invoke("DestroyGameObject", seconds);
     }
 
@@ -111,6 +151,7 @@ public abstract class Chessman : MonoBehaviour {
     private void Move()
     {
         startMove = true;
+        AudioSource.PlayOneShot(MoveSurfAudio);
         //transform.position = newPosition;
 
         // stop rotation
