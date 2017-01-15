@@ -35,6 +35,15 @@ public class BoardManager : MonoBehaviour
         Chessmans = new Chessman[8, 8];
         EnPassantMove = new int[2] { -1, -1 };
         SpawnAllChessmans();
+        ShowPowerEffectAllChessmans();
+    }
+
+    private void ShowPowerEffectAllChessmans()
+    {
+        foreach (GameObject piece in activeChessmans)
+        {
+            piece.GetComponent<Chessman>().PlayPowerEffectFor(5.0f);
+        }
     }
 
     private void Update()
@@ -286,10 +295,10 @@ public class BoardManager : MonoBehaviour
                 delays = DELAY_TIME;
                 c.RotateEach(ROTATE_TIME);
                 c.DestroyAfter(delays);
-                BoardHighlights.Instance.ShowKillerHighlight(new Vector3(selectedChessman.CurrentX + 0.5f, 0, selectedChessman.CurrentY + 0.5f));
+                BoardHighlights.Instance.ShowKillerHighlight(new Vector3(x + 0.5f, 0, y + 0.5f));
                 BoardHighlights.Instance.HideKillerHighlightAfter(delays);
 
-                //selectedChessman.RotateEach(ROTATE_TIME);
+                selectedChessman.PlayPowerEffectFor(delays);
 
                 if (c.GetType() == typeof(King))
                 {
