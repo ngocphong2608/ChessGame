@@ -39,6 +39,7 @@ public class BoardManager : MonoBehaviour
     {
         UpdateSelection();
         DrawChessBoard();
+        HighLightMouseHoverCell();
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -64,6 +65,21 @@ public class BoardManager : MonoBehaviour
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private void HighLightMouseHoverCell()
+    {
+        if (GameManager.Instance.GameMode != GameManager.MODE.VISUALIZE)
+        {
+            if (selectionX != -1 && selectionY != -1)
+            {
+                BoardHighlights.Instance.ShowHoverHighlight(new Vector3(selectionX + 0.5f, 0, selectionY + 0.5f));
+            }
+            else
+            {
+                BoardHighlights.Instance.HideHoverHighlight();
             }
         }
     }
@@ -258,6 +274,8 @@ public class BoardManager : MonoBehaviour
                     return;
                 }
             }
+
+            BoardHighlights.Instance.ShowHoverHighlight(new Vector3(x+0.5f, 0, y+0.5f));
 
             // check if pawn step on final line
             ProcessIfPawnStepOnFinalLine(x, y);

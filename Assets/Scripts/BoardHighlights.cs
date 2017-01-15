@@ -8,10 +8,12 @@ public class BoardHighlights : MonoBehaviour {
 
     public GameObject selectedPref;
     public GameObject highlightPrefab;
+    public GameObject hoverHighlightPrefab;
 
     private List<GameObject> highlights;
     private GameObject parent;
     private GameObject selectedHighlight;
+    private GameObject hoverHighlight;
 
     private void Start()
     {
@@ -21,6 +23,9 @@ public class BoardHighlights : MonoBehaviour {
 
         selectedHighlight = Instantiate(selectedPref);
         selectedHighlight.SetActive(false);
+
+        hoverHighlight = Instantiate(hoverHighlightPrefab);
+        hoverHighlight.SetActive(false);
     }
 
     public GameObject GetHighlightObject()
@@ -65,5 +70,16 @@ public class BoardHighlights : MonoBehaviour {
     {
         selectedHighlight.transform.position = position;
         selectedHighlight.SetActive(true);
+    }
+
+    public void ShowHoverHighlight(Vector3 pos)
+    {
+        hoverHighlight.transform.position = pos;
+        hoverHighlight.SetActive(true);
+    }
+
+    public void HideHoverHighlight()
+    {
+        hoverHighlight.SetActive(false);
     }
 }
