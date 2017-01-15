@@ -74,4 +74,14 @@ public class ButtonManager : MonoBehaviour
         }
         cameraAnimator.SetTrigger(cameraTrigger[index]);
     }
+
+    public void ExitGame()
+    {
+        LevelManager.QuitRequest();
+    }
+
+    public void LoadMainMenu()
+    {
+        LevelManager.LoadLevel("MainMenu");
+    }
 }
