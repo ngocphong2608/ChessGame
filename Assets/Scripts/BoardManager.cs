@@ -25,7 +25,7 @@ public class BoardManager : MonoBehaviour
 
     public int[] EnPassantMove { set; get; }
 
-    public CameraButtonManager buttonManager;
+    public ButtonManager buttonManager;
 
     private void Start()
     {
