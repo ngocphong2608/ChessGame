@@ -6,8 +6,8 @@ using UnityEngine;
 public class MainGameManager : MonoBehaviour {
     VisualizeMatch visualize;
 
-    float delay = 3f;
-    float oldTime = 0;
+    float nextMoveDelay = 2f;
+    float nextMoveTimeOld = 0;
     public bool isVisualize = false;
     public GameObject playBtn;
     public Animator animator;
@@ -32,7 +32,6 @@ public class MainGameManager : MonoBehaviour {
         {
             Debug.Log("Player Vs PLayer Mode");
         }
-        //playBtn.SetActive(false);
     }
 	
 	// Update is called once per frame
@@ -56,9 +55,9 @@ public class MainGameManager : MonoBehaviour {
                     processCommand(commands.Dequeue());
                     commandDelayOld = Time.time;
                 }
-            } else if (Time.time - oldTime > delay)
+            } else if (Time.time - nextMoveTimeOld > nextMoveDelay)
             {
-                oldTime = Time.time;
+                nextMoveTimeOld = Time.time;
                 StepNext();
             }
         }
