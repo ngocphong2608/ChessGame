@@ -319,10 +319,20 @@ public class BoardManager : MonoBehaviour
         bool[,] allowedMoves = Chessmans[x, y].PossibleMove();
         if (IsCheckmate(allowedMoves))
         {
-            if (isWhiteTurn)
-                Debug.Log("Black team is checkmated");
-            else
-                Debug.Log("White team is checkmated");
+            OnChecked();
+            //if (isWhiteTurn)
+            //    Debug.Log("Black team is checkmated");
+            //else
+            //    Debug.Log("White team is checkmated");
+        }
+    }
+
+    private void OnChecked()
+    {
+        GameObject mainGameMangerGO = GameObject.Find("MainGameManager");
+        if (mainGameMangerGO != null)
+        {
+            mainGameMangerGO.GetComponent<MainGameManager>().OnChecked();
         }
     }
 

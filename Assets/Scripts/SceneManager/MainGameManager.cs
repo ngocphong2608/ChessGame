@@ -15,6 +15,8 @@ public class MainGameManager : MonoBehaviour {
     float commandDelay = 1.0f;
     float commandDelayOld = 0f;
 
+    public Animator checkedAnimator;
+
     // Use this for initialization
     void Start () {
     }
@@ -130,5 +132,10 @@ public class MainGameManager : MonoBehaviour {
         {
             BoardManager.Instance.MoveChessman(cmd.x, cmd.y);
         }
+    }
+
+    public void OnChecked()
+    {
+        checkedAnimator.SetTrigger("PlayChecked");
     }
 }
