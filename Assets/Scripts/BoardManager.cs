@@ -53,8 +53,15 @@ public class BoardManager : MonoBehaviour
                     }
                     else
                     {
-                        // move the chessman
-                        MoveChessman(selectionX, selectionY);
+                        if (Chessmans[selectionX, selectionY] && Chessmans[selectionX,selectionY].isWhite == isWhiteTurn) //The same team, reselect
+                        {
+                            SelectChessman(selectionX, selectionY);
+                        }
+                        else
+                        {
+                            // move the chessman
+                            MoveChessman(selectionX, selectionY);
+                        }
                     }
                 }
             }
@@ -220,6 +227,7 @@ public class BoardManager : MonoBehaviour
         //selectedMat.mainTexture = previousMat.mainTexture;
         //selectedChessman.GetComponentInChildren<MeshRenderer>().material = selectedMat;
 
+        BoardHighlights.Instance.HideHighlights();
         BoardHighlights.Instance.HighlightAllowedMoves(allowedMoves);
         BoardHighlights.Instance.HighlightSelected(new Vector3(x + 0.5f, 0, y + 0.5f));
     }
