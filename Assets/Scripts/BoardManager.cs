@@ -26,6 +26,8 @@ public class BoardManager : MonoBehaviour
     public int[] EnPassantMove { set; get; }
 
     public ButtonManager buttonManager;
+    public AudioClip cellHoverAudio;
+    public AudioClip pieceSelectedAudio;
 
     private void Start()
     {
@@ -69,13 +71,31 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    
+    private void PlayCellHoverSound()
+    {
+        GetComponent<AudioSource>().PlayOneShot(cellHoverAudio);
+    }
+
+    private void PlayPieceSelectedSound()
+    {
+        GetComponent<AudioSource>().PlayOneShot(pieceSelectedAudio);
+    }
+
+    private int oldSelectionX, oldSelectionY;
     private void HighLightMouseHoverCell()
     {
         if (GameManager.Instance.GameMode != GameManager.MODE.VISUALIZE)
         {
             if (selectionX != -1 && selectionY != -1)
             {
-                BoardHighlights.Instance.ShowHoverHighlight(new Vector3(selectionX + 0.5f, 0, selectionY + 0.5f));
+                if (oldSelectionX != selectionX || oldSelectionY != selectionY)
+                {
+                    BoardHighlights.Instance.ShowHoverHighlight(new Vector3(selectionX + 0.5f, 0, selectionY + 0.5f));
+                    PlayCellHoverSound();
+                    oldSelectionX = selectionX;
+                    oldSelectionY = selectionY;
+                }
             }
             else
             {
@@ -221,6 +241,8 @@ public class BoardManager : MonoBehaviour
             return;
         if (Chessmans[x, y].isWhite != isWhiteTurn)
             return;
+
+        PlayPieceSelectedSound();
 
         bool hasAtLeastOneMove = false;
         allowedMoves = Chessmans[x, y].PossibleMove();

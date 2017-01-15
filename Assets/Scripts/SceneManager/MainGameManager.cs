@@ -9,7 +9,6 @@ public class MainGameManager : MonoBehaviour {
     float nextMoveDelay = 2f;
     float nextMoveTimeOld = 0;
     public bool isVisualize = false;
-    public GameObject playBtn;
     public Animator animator;
     bool isFirst = true;
     float commandDelay = 1.0f;
