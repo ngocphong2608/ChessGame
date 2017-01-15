@@ -43,6 +43,19 @@ public abstract class Chessman : MonoBehaviour {
         }
     }
 
+    private static AudioClip _femaleDeadAudio;
+    private static AudioClip FemaleDeadAudio
+    {
+        get
+        {
+            if (_femaleDeadAudio == null)
+            {
+                _femaleDeadAudio = Resources.Load<AudioClip>("Sound/Game/dead_female");
+            }
+            return _femaleDeadAudio;
+        }
+    }
+
     private static AudioClip _moveSurfAudio;
     private static AudioClip MoveSurfAudio
     {
@@ -178,8 +191,20 @@ public abstract class Chessman : MonoBehaviour {
 
     internal void DestroyAfter(float seconds)
     {
-        AudioSource.PlayOneShot(ManDeadAudio);
+        PlayDieSound();
         Invoke("DestroyGameObject", seconds);
+    }
+
+    private void PlayDieSound()
+    {
+        if (this.Annotation() != "Q")
+        {
+            AudioSource.PlayOneShot(ManDeadAudio);
+        }
+        else
+        {
+            AudioSource.PlayOneShot(FemaleDeadAudio);
+        }
     }
 
     private void DestroyGameObject()
