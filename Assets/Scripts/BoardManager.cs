@@ -284,9 +284,10 @@ public class BoardManager : MonoBehaviour
             if (c != null && c.isWhite != isWhiteTurn)
             {
                 delays = DELAY_TIME;
-
                 c.RotateEach(ROTATE_TIME);
                 c.DestroyAfter(delays);
+                BoardHighlights.Instance.ShowKillerHighlight(new Vector3(selectedChessman.CurrentX + 0.5f, 0, selectedChessman.CurrentY + 0.5f));
+                BoardHighlights.Instance.HideKillerHighlightAfter(delays);
 
                 //selectedChessman.RotateEach(ROTATE_TIME);
 
