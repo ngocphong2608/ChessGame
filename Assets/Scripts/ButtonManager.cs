@@ -33,6 +33,9 @@ public class ButtonManager : MonoBehaviour
         if (clickMash == null)
         {
             Debug.Log("Can't find ClickMask.");
+        } else
+        {
+            clickMash.SetActive(false);
         }
     }
 
