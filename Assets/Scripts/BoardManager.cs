@@ -71,13 +71,16 @@ public class BoardManager : MonoBehaviour
 
     private void HighLightMouseHoverCell()
     {
-        if (selectionX != -1 && selectionY != -1)
+        if (GameManager.Instance.GameMode != GameManager.MODE.VISUALIZE)
         {
-            BoardHighlights.Instance.ShowHoverHighlight(new Vector3(selectionX + 0.5f, 0, selectionY + 0.5f));
-        }
-        else
-        {
-            BoardHighlights.Instance.HideHoverHighlight();
+            if (selectionX != -1 && selectionY != -1)
+            {
+                BoardHighlights.Instance.ShowHoverHighlight(new Vector3(selectionX + 0.5f, 0, selectionY + 0.5f));
+            }
+            else
+            {
+                BoardHighlights.Instance.HideHoverHighlight();
+            }
         }
     }
 
@@ -271,6 +274,8 @@ public class BoardManager : MonoBehaviour
                     return;
                 }
             }
+
+            BoardHighlights.Instance.ShowHoverHighlight(new Vector3(x+0.5f, 0, y+0.5f));
 
             // check if pawn step on final line
             ProcessIfPawnStepOnFinalLine(x, y);
