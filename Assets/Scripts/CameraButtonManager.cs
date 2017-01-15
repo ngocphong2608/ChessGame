@@ -4,11 +4,10 @@ using System.Collections;
 public class CameraButtonManager : MonoBehaviour
 {
 
-    enum Position { White, Black, Left, Right }
-
     Animator animator;
-    Position current = Position.White;
 
+    int index = 0;
+    private string[] cameraTrigger = { "WhiteTurn", "RightMotion", "BlackTurn", "LeftMotion"};
 
     // Use this for initialization
     void Start()
@@ -20,34 +19,21 @@ public class CameraButtonManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     // side: left, right, white, black
     public void MoveCamera(string side)
     {
-        if (side == "left" && current != Position.Left)
+        if (side == "left")
         {
-            animator.SetTrigger("LeftMotion");
-            current = Position.Left;
-        }
-        else if (side == "right" && current != Position.Right)
+            index--;
+            if (index < 0)
+                index = 3;
+            
+        } else
         {
-            animator.SetTrigger("RightMotion");
-            current = Position.Right;
+            index++;
+            if (index > 3)
+                index = 0;
         }
-        else if (side == "white" && current != Position.White)
-        {
-            animator.SetTrigger("WhiteTurn");
-            current = Position.White;
-        }
-        else if (side == "black" && current != Position.Black)
-        {
-            animator.SetTrigger("BlackTurn");
-            current = Position.Black;
-        }
+        animator.SetTrigger(cameraTrigger[index]);
     }
 }
