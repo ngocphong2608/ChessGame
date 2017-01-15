@@ -4,7 +4,7 @@ using System;
 
 public class BoardManager : MonoBehaviour
 {
-    private const float DELAY_TIME = 2F;
+    private const float DELAY_TIME = 1.5F;
     private const float ROTATE_TIME = 0.1F;
 
     private const float TILE_SIZE = 1.0f;

@@ -11,7 +11,7 @@ public abstract class Chessman : MonoBehaviour {
 
     private Quaternion originRotation;
     private float speed = 1f;
-    private float incSpeed = 0.1f;
+    private float incSpeed = 0.5f;
 
     private Animator anim;
 
@@ -56,6 +56,42 @@ public abstract class Chessman : MonoBehaviour {
         }
     }
 
+    private static GameObject _VFX_ParticlePath;
+    private static GameObject VFX_ParticlePath
+    {
+        get
+        {
+            if (_VFX_ParticlePath == null)
+            {
+                _VFX_ParticlePath = Resources.Load<GameObject>("Prefabs/VFX/VFX_ParticlePath");
+            }
+            return _VFX_ParticlePath;
+        }
+    }
+
+    private GameObject _particlePathGO = null;
+    private GameObject ParticlePathGO
+    {
+        get
+        {
+            if (_particlePathGO == null)
+            {
+                _particlePathGO = Instantiate(VFX_ParticlePath);
+                _particlePathGO.transform.parent = gameObject.transform;
+
+                if (isWhite)
+                {
+                    _particlePathGO.transform.localPosition = new Vector3(0, 0.5f, -0.2f);
+                } else
+                {
+                    _particlePathGO.transform.localPosition = new Vector3(0, 0.5f, 0.2f);
+                }
+                
+            }
+            return _particlePathGO;
+        }
+    }
+
     private void Start()
     {
         originRotation = transform.rotation;
@@ -87,9 +123,20 @@ public abstract class Chessman : MonoBehaviour {
                 newPosition = Vector3.zero;
                 startMove = false;
                 speed = 1f;
+                HideMoveEffect();
             }
                 
         }
+    }
+
+    private void HideMoveEffect()
+    {
+        ParticlePathGO.SetActive(false);
+    }
+
+    private void ShowMoveEffect()
+    {
+        ParticlePathGO.SetActive(true);
     }
 
     public void SetPosition(int x, int y)
@@ -148,10 +195,16 @@ public abstract class Chessman : MonoBehaviour {
         Invoke("Move", seconds);
     }
 
+    private void PlayMoveSoundEffect()
+    {
+        AudioSource.PlayOneShot(MoveSurfAudio);
+    }
+
     private void Move()
     {
         startMove = true;
-        AudioSource.PlayOneShot(MoveSurfAudio);
+        ShowMoveEffect();
+        PlayMoveSoundEffect();
         //transform.position = newPosition;
 
         // stop rotation
