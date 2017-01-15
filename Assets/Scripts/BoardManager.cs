@@ -39,6 +39,7 @@ public class BoardManager : MonoBehaviour
     {
         UpdateSelection();
         DrawChessBoard();
+        HighLightMouseHoverCell();
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -65,6 +66,18 @@ public class BoardManager : MonoBehaviour
                     }
                 }
             }
+        }
+    }
+
+    private void HighLightMouseHoverCell()
+    {
+        if (selectionX != -1 && selectionY != -1)
+        {
+            BoardHighlights.Instance.ShowHoverHighlight(new Vector3(selectionX + 0.5f, 0, selectionY + 0.5f));
+        }
+        else
+        {
+            BoardHighlights.Instance.HideHoverHighlight();
         }
     }
 
