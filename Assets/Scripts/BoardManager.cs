@@ -221,6 +221,7 @@ public class BoardManager : MonoBehaviour
         //selectedChessman.GetComponentInChildren<MeshRenderer>().material = selectedMat;
 
         BoardHighlights.Instance.HighlightAllowedMoves(allowedMoves);
+        BoardHighlights.Instance.HighlightSelected(new Vector3(x + 0.5f, 0, y + 0.5f));
     }
 
     public void MoveChessman(int x, int y)
