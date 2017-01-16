@@ -283,6 +283,13 @@ public class BoardManager : MonoBehaviour
     {
         if (allowedMoves[x, y])
         {
+            if (chessMate != null)
+            {
+                BoardHighlights.Instance.HideKillerHighlight();
+                chessMate.HidePowerEffect();
+                chessMate = null;
+            }
+
             Chessman c = Chessmans[x, y];
             float delays = 0f;
 
@@ -372,12 +379,20 @@ public class BoardManager : MonoBehaviour
         Chessmans[x, y] = selectedChessman;
     }
 
+    private Chessman chessMate;
+
     private void ProcessCheckmate(int x, int y)
     {
         bool[,] allowedMoves = Chessmans[x, y].PossibleMove();
         if (IsCheckmate(allowedMoves))
         {
+            Chessman kingPos = GetKingPos(!isWhiteTurn);
+            BoardHighlights.Instance.ShowKillerHighlight(new Vector3(kingPos.CurrentX + 0.5f, 0, kingPos.CurrentY + 0.5f));
+            //BoardHighlights.Instance.HideKillerHighlightAfter(2.0f);
+            selectedChessman.ShowPowerEffect();
+            chessMate = selectedChessman;
             OnChecked();
+
             //if (isWhiteTurn)
             //    Debug.Log("Black team is checkmated");
             //else
@@ -428,6 +443,22 @@ public class BoardManager : MonoBehaviour
                 EnPassantMove[1] = y + 1;
             }
         }
+    }
+
+    private Chessman GetKingPos(bool isWhite)
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                if ( Chessmans[i, j] != null && Chessmans[i, j].GetType() == typeof(King)
+                    && Chessmans[i, j].isWhite == isWhite)
+                {
+                    return Chessmans[i,j];
+                }
+            }
+        }
+        return null;
     }
 
     private bool IsCheckmate(bool[,] allowedMoves)
@@ -517,6 +548,8 @@ public class BoardManager : MonoBehaviour
         {
             MoveFromTo(7, rank, 5, rank);
             MoveFromTo(4, rank, 6, rank);
+            Chessmans[5, rank].PlayPowerEffectFor(2.0f);
+            Chessmans[6, rank].PlayPowerEffectFor(2.0f);
         }
     }
 

@@ -205,7 +205,12 @@ public abstract class Chessman : MonoBehaviour {
         Invoke("HidePowerEffect", seconds);
     }
 
-    private void HidePowerEffect()
+    public void ShowPowerEffect()
+    {
+        PowerEffect.SetActive(true);
+    }
+
+    public void HidePowerEffect()
     {
         PowerEffect.SetActive(false);
     }
