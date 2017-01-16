@@ -26,6 +26,8 @@ public class BoardManager : MonoBehaviour
     public int[] EnPassantMove { set; get; }
 
     public ButtonManager buttonManager;
+    public AudioClip cellHoverAudio;
+    public AudioClip pieceSelectedAudio;
 
     private void Start()
     {
@@ -33,6 +35,15 @@ public class BoardManager : MonoBehaviour
         Chessmans = new Chessman[8, 8];
         EnPassantMove = new int[2] { -1, -1 };
         SpawnAllChessmans();
+        ShowPowerEffectAllChessmans();
+    }
+
+    private void ShowPowerEffectAllChessmans()
+    {
+        foreach (GameObject piece in activeChessmans)
+        {
+            piece.GetComponent<Chessman>().PlayPowerEffectFor(5.0f);
+        }
     }
 
     private void Update()
@@ -69,13 +80,31 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    
+    private void PlayCellHoverSound()
+    {
+        GetComponent<AudioSource>().PlayOneShot(cellHoverAudio);
+    }
+
+    private void PlayPieceSelectedSound()
+    {
+        GetComponent<AudioSource>().PlayOneShot(pieceSelectedAudio);
+    }
+
+    private int oldSelectionX, oldSelectionY;
     private void HighLightMouseHoverCell()
     {
         if (GameManager.Instance.GameMode != GameManager.MODE.VISUALIZE)
         {
             if (selectionX != -1 && selectionY != -1)
             {
-                BoardHighlights.Instance.ShowHoverHighlight(new Vector3(selectionX + 0.5f, 0, selectionY + 0.5f));
+                if (oldSelectionX != selectionX || oldSelectionY != selectionY)
+                {
+                    BoardHighlights.Instance.ShowHoverHighlight(new Vector3(selectionX + 0.5f, 0, selectionY + 0.5f));
+                    PlayCellHoverSound();
+                    oldSelectionX = selectionX;
+                    oldSelectionY = selectionY;
+                }
             }
             else
             {
@@ -222,6 +251,8 @@ public class BoardManager : MonoBehaviour
         if (Chessmans[x, y].isWhite != isWhiteTurn)
             return;
 
+        PlayPieceSelectedSound();
+
         bool hasAtLeastOneMove = false;
         allowedMoves = Chessmans[x, y].PossibleMove();
 
@@ -252,6 +283,13 @@ public class BoardManager : MonoBehaviour
     {
         if (allowedMoves[x, y])
         {
+            if (chessMate != null)
+            {
+                BoardHighlights.Instance.HideKillerHighlight();
+                chessMate.HidePowerEffect();
+                chessMate = null;
+            }
+
             Chessman c = Chessmans[x, y];
             float delays = 0f;
 
@@ -262,11 +300,12 @@ public class BoardManager : MonoBehaviour
             if (c != null && c.isWhite != isWhiteTurn)
             {
                 delays = DELAY_TIME;
-
                 c.RotateEach(ROTATE_TIME);
                 c.DestroyAfter(delays);
+                BoardHighlights.Instance.ShowKillerHighlight(new Vector3(x + 0.5f, 0, y + 0.5f));
+                BoardHighlights.Instance.HideKillerHighlightAfter(delays);
 
-                //selectedChessman.RotateEach(ROTATE_TIME);
+                selectedChessman.PlayPowerEffectFor(delays);
 
                 if (c.GetType() == typeof(King))
                 {
@@ -340,12 +379,20 @@ public class BoardManager : MonoBehaviour
         Chessmans[x, y] = selectedChessman;
     }
 
+    private Chessman chessMate;
+
     private void ProcessCheckmate(int x, int y)
     {
         bool[,] allowedMoves = Chessmans[x, y].PossibleMove();
         if (IsCheckmate(allowedMoves))
         {
+            Chessman kingPos = GetKingPos(!isWhiteTurn);
+            BoardHighlights.Instance.ShowKillerHighlight(new Vector3(kingPos.CurrentX + 0.5f, 0, kingPos.CurrentY + 0.5f));
+            //BoardHighlights.Instance.HideKillerHighlightAfter(2.0f);
+            selectedChessman.ShowPowerEffect();
+            chessMate = selectedChessman;
             OnChecked();
+
             //if (isWhiteTurn)
             //    Debug.Log("Black team is checkmated");
             //else
@@ -396,6 +443,22 @@ public class BoardManager : MonoBehaviour
                 EnPassantMove[1] = y + 1;
             }
         }
+    }
+
+    private Chessman GetKingPos(bool isWhite)
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                if ( Chessmans[i, j] != null && Chessmans[i, j].GetType() == typeof(King)
+                    && Chessmans[i, j].isWhite == isWhite)
+                {
+                    return Chessmans[i,j];
+                }
+            }
+        }
+        return null;
     }
 
     private bool IsCheckmate(bool[,] allowedMoves)
@@ -485,6 +548,8 @@ public class BoardManager : MonoBehaviour
         {
             MoveFromTo(7, rank, 5, rank);
             MoveFromTo(4, rank, 6, rank);
+            Chessmans[5, rank].PlayPowerEffectFor(2.0f);
+            Chessmans[6, rank].PlayPowerEffectFor(2.0f);
         }
     }
 

@@ -105,21 +105,23 @@ public abstract class Chessman : MonoBehaviour {
         }
     }
 
+
+    
     private void Start()
     {
         originRotation = transform.rotation;
 
-        Animator[] anims = GetComponentsInChildren<Animator>();
+        //Animator[] anims = GetComponentsInChildren<Animator>();
 
-        anim = anims[0];
+        //anim = anims[0];
 
-        if (anims.Length >= 2)
-            anim = anims[anims.Length - 1];
+        //if (anims.Length >= 2)
+        //    anim = anims[anims.Length - 1];
 
-        if (anim == null)
-        {
-            Debug.Log("Chessman's animator is null");
-        }
+        //if (anim == null)
+        //{
+        //    Debug.Log("Chessman's animator is null");
+        //}
     }
 
     private void Update()
@@ -177,8 +179,40 @@ public abstract class Chessman : MonoBehaviour {
 
     internal void RotateEach(float seconds)
     {
-        anim.SetTrigger("KillChessman");
         InvokeRepeating("Rotate", 0f, seconds);
+    }
+
+    private GameObject _powerEffect;
+    private GameObject PowerEffect
+    {
+        get
+        {
+            if (_powerEffect == null)
+            {
+                _powerEffect = gameObject.transform.GetChild(2).gameObject;
+            }
+            return _powerEffect;
+        }
+    }
+
+    public void PlayPowerEffectFor(float seconds)
+    {
+        if (PowerEffect == null)
+        {
+            Debug.Log(CurrentX + ";" + CurrentY + " " + Annotation());
+        }
+        PowerEffect.SetActive(true);
+        Invoke("HidePowerEffect", seconds);
+    }
+
+    public void ShowPowerEffect()
+    {
+        PowerEffect.SetActive(true);
+    }
+
+    public void HidePowerEffect()
+    {
+        PowerEffect.SetActive(false);
     }
 
     private int t = 5;
